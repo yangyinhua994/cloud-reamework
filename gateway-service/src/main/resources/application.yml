@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: "optional:nacos:gateway-service-${spring.profiles.active}.yml"
+  application:
+    name:
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: public
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
