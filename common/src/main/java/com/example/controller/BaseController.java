@@ -8,10 +8,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.convert.BaseConvert;
 import com.example.dto.BaseDTO;
 import com.example.entity.BaseEntity;
+import com.example.entity.User;
 import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Add;
 import com.example.groups.Update;
+import com.example.holder.UserContextHolder;
 import com.example.response.Response;
 import com.example.vo.BaseVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
@@ -37,6 +39,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @PostMapping("/add")
     public Response<T> add(@RequestBody @Validated(Add.class) D dto) {
+        dto.setId(null);
         T entity = preAdd(dto);
         if (entity.getId() == null) {
             entity.setId(IdWorker.getId());

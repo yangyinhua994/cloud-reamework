@@ -31,7 +31,7 @@ public class JwtUtil {
      * @param claims 自定义claims
      * @return JWT token
      */
-    public String generateToken(Map<String, Object> claims) {
+    public String generateToken(Map<String, String> claims) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(appConfigSecurityJwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
 
@@ -47,8 +47,8 @@ public class JwtUtil {
     }
 
     public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
+        Map<String, String> claims = new HashMap<>();
+        claims.put("id", user.getId().toString());
         claims.put("username", user.getUsername());
         return generateToken(claims);
     }

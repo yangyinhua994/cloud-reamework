@@ -14,6 +14,9 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Component
 @RequiredArgsConstructor
 public class TokenParseFilter implements GlobalFilter, Ordered {
@@ -37,9 +40,10 @@ public class TokenParseFilter implements GlobalFilter, Ordered {
                 String userId = jwtUtil.getIdFromToken(token).toString();
                 String username = jwtUtil.get(token, "username").toString();
                 if (!StringUtils.isEmpty(userId) && !StringUtils.isEmpty(username)) {
+                    String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
                     ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                            .header("X-User-Id", userId)
-                            .header("X-user-Name", username)
+                            .header("userId", userId)
+                            .header("username", encodedUsername)
                             .build();
                     return chain.filter(exchange.mutate().request(modifiedRequest).build());
                 }
