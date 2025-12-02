@@ -4,7 +4,7 @@ spring:
       - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yml"
       - "optional:nacos:common-${spring.profiles.active}.yml"
   application:
-    name: user-service
+    name: order-service
   profiles:
     active: dev
   cloud:

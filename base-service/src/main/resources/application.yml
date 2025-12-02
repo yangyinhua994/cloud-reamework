@@ -3,8 +3,6 @@ spring:
     import:
       - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yml"
       - "optional:nacos:common-${spring.profiles.active}.yml"
-      - "optional:nacos:redis-${spring.profiles.active}.yml"
-      - "optional:nacos:app-${spring.profiles.active}.yml"
   application:
     name: base-service
   profiles:
