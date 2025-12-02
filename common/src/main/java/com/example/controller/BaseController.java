@@ -68,7 +68,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      * 获取详情
      */
     @GetMapping("/query/{id}")
-    public Response<V> get(@PathVariable Serializable id) {
+    public Response<V> get(@PathVariable Long id) {
         T entity = service.getById(id);
         if (entity == null) {
             return Response.fail("数据不存在");

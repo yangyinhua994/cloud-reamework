@@ -1,6 +1,5 @@
 package com.example.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 @Data
@@ -9,7 +8,6 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("community_apply")
 public class CommunityApply extends BaseEntity {
     
     private Long communityId;
