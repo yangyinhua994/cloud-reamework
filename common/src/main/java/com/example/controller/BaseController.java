@@ -2,11 +2,13 @@ package com.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.convert.BaseConvert;
 import com.example.dto.BaseDTO;
 import com.example.entity.BaseEntity;
+import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Add;
 import com.example.groups.Update;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Validated
 @Data
@@ -33,13 +36,16 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      * 新增
      */
     @PostMapping("/add")
-    public Response<Long> add(@RequestBody @Validated(Add.class) D dto) {
-        dto.setId(null);
-        preAdd(dto);
-        T entity = convert.dtoToEntity(dto);
-        service.save(entity);
+    public Response<T> add(@RequestBody @Validated(Add.class) D dto) {
+        T entity = preAdd(dto);
+        if (entity.getId() == null) {
+            entity.setId(IdWorker.getId());
+            service.save(entity);
+        } else {
+            service.updateById(entity);
+        }
         postAdd(entity, dto);
-        return Response.success(entity.getId());
+        return Response.success(entity);
     }
 
     /**
@@ -69,6 +75,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @GetMapping("/query/{id}")
     public Response<V> get(@PathVariable Long id) {
+        if (id == null) {
+            return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
+        }
         T entity = service.getById(id);
         if (entity == null) {
             return Response.fail("数据不存在");
@@ -94,12 +103,32 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     }
 
     /**
+     * 物理删除
+     */
+    @DeleteMapping("/delete/soft/{id}")
+    public Response<Void> deleteSoft(@PathVariable Long id) {
+        if (id == null) {
+            return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
+        }
+        T t = getService().getById(id);
+        if (t == null) {
+            return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
+        }
+        t.setDeleted(DeleteEnum.DELETED.getCode());
+        getService().updateById(t);
+        return Response.success();
+    }
+
+    /**
      * 删除
      */
     @DeleteMapping("/delete/{id}")
-    public Response<Void> delete(@PathVariable Serializable id) {
+    public Response<Void> delete(@PathVariable Long id) {
+        if (id == null) {
+            return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
+        }
         if (!service.removeById(id)) {
-            return Response.fail("删除失败，数据不存在");
+            return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
         return Response.success();
     }
@@ -116,8 +145,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     /**
      * 新增前处理（子类可重写）
      */
-    protected void preAdd(D dto) {
-        // 子类可重写实现业务逻辑
+    protected T preAdd(D dto) {
+        return getConvert().dtoToEntity(dto);
     }
 
     /**

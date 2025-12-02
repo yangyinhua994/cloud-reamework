@@ -1,21 +1,48 @@
 package com.example.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
+import com.example.enums.DeleteEnum;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 public class BaseEntity implements Serializable {
 
-    @TableId
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-    private LocalDate createTime;
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT)
     private String createUser;
-    private LocalDate updateTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUser;
+
+    @TableField(fill = FieldFill.INSERT)
     private Integer deleted;
+
+    @TableField(fill = FieldFill.INSERT)
     private Integer version;
+
+    public static boolean isDelete(Integer deleted) {
+        return Objects.equals(deleted, DeleteEnum.DELETED.getCode());
+    }
+
+    public boolean isDelete() {
+        return isDelete(deleted);
+    }
 
 }

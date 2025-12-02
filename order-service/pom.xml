@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example</groupId>
-        <artifactId>warehousing-system</artifactId>
+        <artifactId>cloud-reamework</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 

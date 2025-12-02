@@ -2,6 +2,7 @@ package com.example.dto;
 
 import com.example.groups.Add;
 import com.example.groups.Delete;
+import com.example.groups.Login;
 import com.example.groups.Update;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -23,13 +24,12 @@ public class UserDTO extends BaseDTO {
     /**
      * 用户名
      */
-    @NotEmpty(message = "用户名不能为空", groups = {Add.class, Update.class, Delete.class})
     private String username;
 
     /**
      * 密码
      */
-    @NotEmpty(message = "密码不能为空", groups = {Add.class})
+    @NotEmpty(message = "密码不能为空", groups = {Add.class, Login.class})
     private String password;
 
     /**
@@ -61,7 +61,7 @@ public class UserDTO extends BaseDTO {
      * 手机号
      */
     @NotEmpty(message = "手机号不能为空", groups = {Add.class})
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确", groups = {Add.class, Update.class})
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确", groups = {Add.class, Update.class, Login.class})
     private String phone;
 
     /**

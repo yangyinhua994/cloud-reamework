@@ -3,7 +3,9 @@ package com.example.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.convert.CommunityConvert;
 import com.example.dto.CommunityDTO;
+import com.example.entity.BaseEntity;
 import com.example.entity.Community;
+import com.example.entity.SysUser;
 import com.example.enums.ResponseMessageEnum;
 import com.example.response.Response;
 import com.example.service.CommunityService;
@@ -23,11 +25,12 @@ public class CommunityController extends BaseController<Community, CommunityDTO,
     }
 
     @Override
-    protected void preAdd(CommunityDTO dto) {
+    protected Community preAdd(CommunityDTO dto) {
         // 检查小区名称是否已存在
         if (service.exists(new LambdaQueryWrapper<Community>().eq(Community::getName, dto.getName()))) {
             Response.error(ResponseMessageEnum.COMMUNITY_NAME_EXIST);
         }
+        return super.preAdd(dto);
     }
 
     @Override

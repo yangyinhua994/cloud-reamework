@@ -3,6 +3,7 @@ package com.example.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.convert.SysUserConvert;
 import com.example.dto.SysUserDTO;
+import com.example.entity.BaseEntity;
 import com.example.entity.SysUser;
 import com.example.enums.ResponseMessageEnum;
 import com.example.response.Response;
@@ -24,11 +25,12 @@ public class SysUserController extends BaseController<SysUser, SysUserDTO, SysUs
     }
 
     @Override
-    protected void preAdd(SysUserDTO dto) {
+    protected SysUser preAdd(SysUserDTO dto) {
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, dto.getUsername());
         if (super.getService().exists(queryWrapper)) {
             Response.error(ResponseMessageEnum.USER_NAME_EXIST);
         }
+        return super.preAdd(dto);
     }
 
 }

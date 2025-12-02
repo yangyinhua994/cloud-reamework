@@ -29,4 +29,5 @@ public class User extends BaseEntity {
     private LocalDate birthday;
     private String address;
     private String remark;
+
 }

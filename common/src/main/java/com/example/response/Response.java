@@ -37,6 +37,10 @@ public class Response<T> implements Serializable {
         return new Response<>(500, message, null);
     }
 
+    public static <T> Response<T> fail(ResponseMessageEnum responseMessageEnum) {
+        return new Response<>(500, responseMessageEnum.getMessage(), null);
+    }
+
     public static <T> Response<T> fail(int code, String message) {
         return new Response<>(code, message, null);
     }

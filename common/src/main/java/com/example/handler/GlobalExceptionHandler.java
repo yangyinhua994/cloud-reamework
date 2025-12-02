@@ -1,8 +1,10 @@
 package com.example.handler;
 
 import com.example.ApiException;
+import com.example.config.AppConfig;
 import com.example.response.Response;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final AppConfig appConfig;
 
   /*  @ExceptionHandler(Exception.class)
     public Response<String> handleException(Exception ex) {
@@ -27,6 +32,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public Response<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
+        if (appConfig.isDev()) {
+            throw new RuntimeException(e);
+        }
         if (e.getMessage().contains("foreign key constraint fails")) {
             return Response.fail("数据关联关系错误，请检查外键引用的数据是否存在");
         }
