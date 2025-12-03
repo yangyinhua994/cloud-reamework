@@ -1,0 +1,17 @@
+spring:
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yml"
+      - "optional:nacos:common-${spring.profiles.active}.yml"
+  application:
+    name: finance-service
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 47.109.137.128:8848
+        namespace: public
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos

@@ -34,6 +34,7 @@
         <module>gateway-service</module>
         <module>user-service</module>
         <module>order-service</module>
+        <module>finance-service</module>
     </modules>
 
     <properties>
@@ -47,6 +48,7 @@
         <nacos.version>3.0.2</nacos.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
+        <seata.version>1.8.0</seata.version>
     </properties>
 
     <dependencies>

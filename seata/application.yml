@@ -1,0 +1,83 @@
+# ==================== ??????? ====================
+server:
+  port: 8080 # ??????????7091????
+
+# ==================== Seata ???? ====================
+seata:
+  application-id: ${spring.application.name:seata-server}
+  tx-service-group: default_tx_group # ????????????
+
+  # ?????
+  server:
+    service-port: 8091
+    max-commit-retry-timeout: -1
+    max-rollback-retry-timeout: -1
+    rollback-retry-timeout-unlock-enable: false
+    enable-check-auth: false # ?????????????
+    recovery:
+      committing-retry-period: 1000
+      asyn-committing-retry-period: 1000
+      rollbacking-retry-period: 1000
+      timeout-retry-period: 1000
+
+  security:
+    secretKey: SeataSecretKey0Default1ChangeIt!
+    tokenValidityInMilliseconds: 1800000
+
+store:
+  mode: db
+  session:
+    mode: db
+  lock:
+    mode: db
+  public-key: ""
+
+  db:
+    datasource: druid
+    db-type: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.109.137.128:3306/seata?useUnicode=true&rewriteBatchedStatements=true&serverTimezone=UTC
+    user: root
+    password: 1234qwerQWER
+    min-conn: 5
+    max-conn: 30
+    global-table: global_table
+    branch-table: branch_table
+    lock-table: lock_table
+    distributed-lock-table: distributed_lock
+    query-limit: 100
+    max-wait: 5000
+
+# ==================== ??????? ====================
+service:
+  vgroup-mapping:
+    default_tx_group: default # ???????TC??
+  disable-global-transaction: false
+
+# ==================== ???? (Nacos) ====================
+registry:
+  type: nacos
+  nacos:
+    application: seata-server
+    server-addr: 47.109.137.128:8848
+    group: DEFAULT_GROUP
+    namespace: ""
+    cluster: default
+    username: nacos
+    password: nacos
+
+# ==================== ???? (????) ====================
+config:
+  type: file # ????????
+
+# ==================== ???? ====================
+logging:
+  level:
+    io.seata: info
+  file:
+    name: ${user.home}/logs/seata/seata.log
+
+console:
+  user:
+    username: seata
+    password: seata
