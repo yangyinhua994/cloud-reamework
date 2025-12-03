@@ -69,6 +69,7 @@ public class LoginController {
         userService.save(userConvert.dtoToEntity(dto));
         // 新建财务账户
         financeClient.register();
+
         return Response.success();
     }
 
