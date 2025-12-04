@@ -44,7 +44,7 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
                 user.setDeleted(DeleteEnum.NOT_DELETED.getCode());
                 return user;
             }
-            Response.error(ResponseMessageEnum.PHONE_IS_EXIST);
+            Response.error(ResponseMessageEnum.PHONE_IS_REGISTERED);
         }
         dto.setPassword(PasswordUtil.encryptPassword(dto.getPassword()));
         return super.getConvert().dtoToEntity(dto);

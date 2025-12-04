@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.client.OrderClient;
 import com.example.entity.User;
+import com.example.enums.ResponseMessageEnum;
 import com.example.mapper.UserMapper;
 import com.example.response.Response;
 import com.example.service.UserService;
@@ -28,15 +29,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User getByPhone(String phone) {
+        return getByPhone(phone, true);
+    }
+
+    @Override
+    public User getByPhone(String phone, boolean throwEx) {
         if (StringUtils.isBlank(phone)) {
             return null;
         }
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
                 .eq(User::getPhone, phone);
-        List<User> list = list(queryWrapper);
-        if (CollectionUtils.isEmpty(list)) {
-            return null;
+        return getOne(queryWrapper, throwEx);
+    }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        if (StringUtils.isBlank(phone)) {
+            Response.error(ResponseMessageEnum.PHONE_NOT_EXIST);
         }
-        return list.get(0);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
+                .eq(User::getPhone, phone);
+        return exists(queryWrapper);
     }
 }

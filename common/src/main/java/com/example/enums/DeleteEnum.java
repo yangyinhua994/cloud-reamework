@@ -2,6 +2,8 @@ package com.example.enums;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public enum DeleteEnum {
     NOT_DELETED(0, "未删除"),
@@ -14,6 +16,14 @@ public enum DeleteEnum {
     DeleteEnum(Integer code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    public static boolean isDeleted(Integer deleted) {
+        return Objects.equals(deleted, DELETED.getCode());
+    }
+
+    public static boolean isNotDelete(Integer deleted) {
+        return Objects.equals(deleted, NOT_DELETED.getCode());
     }
 
 }

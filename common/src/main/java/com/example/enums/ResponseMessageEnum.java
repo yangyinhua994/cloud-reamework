@@ -9,9 +9,11 @@ public enum ResponseMessageEnum {
     ID_NOT_NULL("ID不能为空"),
     USER_NOT_EXIST("用户不存在"),
     PHONE_OR_PASSWORD_ERROR("电话或密码错误"),
-    PHONE_IS_EXIST("电话已注册"),
+    PHONE_IS_REGISTERED("电话已注册"),
     DATA_NOT_EXIST("数据不存在"),
-    ID_NOT_EXIST("ID有误");
+    ID_NOT_EXIST("ID有误"),
+    PHONE_NOT_EXIST("电话不能为空"),
+    ;
 
     private final String message;
 

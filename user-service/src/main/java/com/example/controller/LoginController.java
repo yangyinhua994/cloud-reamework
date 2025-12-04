@@ -3,8 +3,10 @@ package com.example.controller;
 import com.example.client.FinanceClient;
 import com.example.constant.GlobalTransactionalConstant;
 import com.example.convert.UserConvert;
+import com.example.dto.FinanceUserDTO;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
+import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Login;
 import com.example.response.Response;
@@ -12,6 +14,7 @@ import com.example.service.UserService;
 import com.example.utils.JwtUtil;
 import com.example.utils.ObjectUtils;
 import com.example.utils.PasswordUtil;
+import com.example.vo.FinanceUserVO;
 import com.example.vo.UserVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
@@ -61,15 +64,21 @@ public class LoginController {
     @GlobalTransactional(name = GlobalTransactionalConstant.FinanceService.REGISTER, rollbackFor = Exception.class)
     @PostMapping("/register")
     public Response<UserVO> register(@RequestBody @Validated(Login.class) UserDTO dto) {
-        User user = userService.getByPhone(dto.getPhone());
-        if (ObjectUtils.isNotEmpty(user)) {
-            return Response.fail(ResponseMessageEnum.PHONE_IS_EXIST);
+        boolean exists = userService.existsByPhone(dto.getPhone());
+        if (exists) {
+            return Response.fail(ResponseMessageEnum.PHONE_IS_REGISTERED);
         }
         dto.setPassword(PasswordUtil.encryptPassword(dto.getPassword()));
         userService.save(userConvert.dtoToEntity(dto));
         // 新建财务账户
-        financeClient.register();
-
+        FinanceUserDTO financeUserDTO = FinanceUserDTO.builder()
+                .phone(dto.getPhone())
+                .username(dto.getUsername())
+                .password(dto.getPassword()).build();
+        Response<FinanceUserVO> response = financeClient.register(financeUserDTO);
+        if (response.isFail()){
+            Response.error(response.getMessage());
+        }
         return Response.success();
     }
 

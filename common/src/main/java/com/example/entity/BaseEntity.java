@@ -37,12 +37,12 @@ public class BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private Integer version;
 
-    public static boolean isDelete(Integer deleted) {
-        return Objects.equals(deleted, DeleteEnum.DELETED.getCode());
+    public boolean isDelete() {
+        return DeleteEnum.isDeleted(deleted);
     }
 
-    public boolean isDelete() {
-        return isDelete(deleted);
+    public boolean isNotDelete() {
+        return DeleteEnum.isNotDelete(deleted);
     }
 
 }

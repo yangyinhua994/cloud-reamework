@@ -38,17 +38,15 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      * 新增
      */
     @PostMapping("/add")
-    public Response<T> add(@RequestBody @Validated(Add.class) D dto) {
+    public Response<V> add(@RequestBody @Validated(Add.class) D dto) {
         dto.setId(null);
         T entity = preAdd(dto);
         if (entity.getId() == null) {
             entity.setId(IdWorker.getId());
-            service.save(entity);
-        } else {
-            service.updateById(entity);
         }
+        service.saveOrUpdate(entity);
         postAdd(entity, dto);
-        return Response.success(entity);
+        return Response.success(convert.entityToVo(entity));
     }
 
     /**

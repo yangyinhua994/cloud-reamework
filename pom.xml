@@ -48,7 +48,6 @@
         <nacos.version>3.0.2</nacos.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
-        <seata.version>1.8.0</seata.version>
     </properties>
 
     <dependencies>
@@ -153,11 +152,6 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>0.12.6</version>
                 <scope>runtime</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
             </dependency>
 
         </dependencies>

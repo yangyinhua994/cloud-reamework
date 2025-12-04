@@ -1,17 +1,17 @@
 spring:
   config:
     import:
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yml"
-      - "optional:nacos:common-${spring.profiles.active}.yml"
+      - "optional:nacos:${spring.application.name}.yml"
+      - "optional:nacos:common.yml"
   application:
-    name: gateway-service
+    name: gateway-server
   profiles:
     active: dev
   cloud:
     nacos:
       config:
         server-addr: 47.109.137.128:8848
-        namespace: public
+        namespace: dev
         group: DEFAULT_GROUP
         username: nacos
         password: nacos

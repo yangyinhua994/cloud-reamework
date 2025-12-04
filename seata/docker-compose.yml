@@ -1,45 +1,18 @@
 services:
   seata-server:
-    image: seataio/seata-server:latest
+    image: seataio/seata-server:2.0.0
     container_name: seata-server
-    hostname: seata-server
+    restart: always
     ports:
+      - "7091:7091"
       - "8091:8091"
-      - "7091:8080"
     environment:
-      # 保留原有环境变量
-      - SEATA_IP=47.109.137.128
-      - SEATA_PORT=8091
-      - STORE_MODE=db
-      - SEATA_ENV=dev
-      - CONFIG_TYPE=file
-      - REGISTRY_TYPE=nacos
-      - NACOS_APPLICATION=seata-server
-      - NACOS_CLUSTER=default
-      - NACOS_SERVER_ADDR=47.109.137.128:8848
-      - NACOS_USERNAME=nacos
-      - NACOS_PASSWORD=nacos
-
-      # 【关键添加】通过环境变量强制指定数据库连接
-      - SEATA_STORE_DB_URL=jdbc:mysql://47.109.137.128:3306/seata?useUnicode=true&rewriteBatchedStatements=true&serverTimezone=UTC
-      - SEATA_STORE_DB_USER=root
-      - SEATA_STORE_DB_PASSWORD=1234qwerQWER
-      - SEATA_STORE_DB_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
-
-      # JAVA_OPTS保持不变
-      - JAVA_OPTS=-server -Xmx512m -Xms512m -Xmn256m -Xss256k -XX:SurvivorRatio=10 -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:MaxDirectMemorySize=1024m --illegal-access=deny --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED
+      - JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
-      - ./logs:/root/logs
-      # 确保配置文件挂载
       - ./application.yml:/seata-server/resources/application.yml
     networks:
       - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:7091/seata/actuator/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+
 networks:
   app-network:
     driver: bridge

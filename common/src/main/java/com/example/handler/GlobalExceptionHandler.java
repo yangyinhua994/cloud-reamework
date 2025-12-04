@@ -1,11 +1,11 @@
 package com.example.handler;
 
-import com.example.ApiException;
+import com.example.exception.ApiException;
 import com.example.config.AppConfig;
 import com.example.response.Response;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler {
 
     private final AppConfig appConfig;
@@ -26,8 +27,12 @@ public class GlobalExceptionHandler {
     }*/
 
     @ExceptionHandler(ApiException.class)
-    public Response<String> handleRuntimeException(ApiException ex) {
-        return Response.fail(ex.getMessage());
+    public Response<String> handleApiException(ApiException e) {
+        /*String xid = RootContext.getXID();
+        if (StringUtils.isNotBlank(xid)) {
+            throw new ApiException(e.getMessage());
+        }*/
+        return Response.fail(e.getMessage());
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
