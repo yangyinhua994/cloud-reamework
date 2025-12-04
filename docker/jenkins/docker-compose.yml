@@ -1,0 +1,28 @@
+networks:
+  app-network:
+    driver: bridge
+    name: app-network
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - ./init.groovy:/usr/share/jenkins/ref/init.groovy.d/init.groovy
+    secrets:
+      - jenkins_admin_password
+    environment:
+      - JENKINS_ADMIN_ID=admin
+      - JENKINS_ADMIN_PASSWORD_FILE=/run/secrets/jenkins_admin_password
+    restart: unless-stopped
+
+secrets:
+  jenkins_admin_password:
+    file: jenkins_password.txt

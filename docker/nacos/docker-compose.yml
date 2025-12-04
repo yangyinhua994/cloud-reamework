@@ -1,0 +1,42 @@
+version: '3.8'
+
+# 复用统一网络
+networks:
+  app-network:
+    driver: bridge
+    name: app-network
+
+services:
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: nacos
+    restart: always
+    networks:
+      - app-network  # 接入app-network网络
+    ports:
+      - "8848:8848"   # 主端口
+      - "9848:9848"   # 客户端通信端口
+      - "9849:9849"   # 集群通信端口
+    environment:
+      # 核心：单机模式 + 禁用MySQL，使用内置Derby
+      MODE: standalone          # 单机模式（默认用Derby）
+      PREFER_HOST_MODE: hostname
+      TZ: Asia/Shanghai
+      # 关闭认证（简化配置，启动后可按需开启）
+      NACOS_AUTH_ENABLE: "false"
+      # JVM 内存配置（避免内存不足）
+      JVM_XMS: 512m
+      JVM_XMX: 512m
+      JVM_XMN: 256m
+      # 禁用MySQL相关配置（关键）
+      SPRING_DATASOURCE_PLATFORM: ""
+    volumes:
+      # 仅挂载数据/日志目录，无需JDBC配置
+      - ./nacos/data:/home/nacos/data
+      - ./nacos/logs:/home/nacos/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/index.html"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
