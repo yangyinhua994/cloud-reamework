@@ -12,7 +12,6 @@ import com.example.utils.RedisUtil;
 import com.example.utils.StringUtils;
 import com.example.utils.ObjectUtils;
 import com.example.utils.PasswordUtil;
-import com.example.vo.OrderVO;
 import com.example.vo.UserVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,15 +30,6 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
         super(service, convert);
         this.redisUtil = redisUtil;
     }
-
-    /**
-     * 获取订单详情
-     */
-    @PostMapping("/order/query/{id}")
-    public Response<OrderVO> getOrderById(@PathVariable("id") Long id) {
-        return super.getService().getOrderById(id);
-    }
-
 
     @Override
     protected User preAdd(UserDTO dto) {
