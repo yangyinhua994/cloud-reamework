@@ -88,4 +88,5 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
         // 删除后置，将数据从缓存中删除
         redisUtil.delete(RedisConstant.User.USER_ID, id);
     }
+
 }
