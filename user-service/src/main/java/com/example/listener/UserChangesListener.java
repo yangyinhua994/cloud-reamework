@@ -3,7 +3,6 @@ package com.example.listener;
 import com.example.broadcast.DatabaseChangesBroadcast;
 import com.example.callback.DatabaseChangesCallback;
 import com.example.constant.RedisConstant;
-import com.example.entity.BaseEntity;
 import com.example.entity.User;
 import com.example.utils.RedisUtil;
 import jakarta.annotation.PostConstruct;

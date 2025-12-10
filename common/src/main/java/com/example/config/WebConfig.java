@@ -1,7 +1,7 @@
 package com.example.config;
 
 import com.example.interceptor.UserContextInterceptor;
-import com.example.properties.AppConfigSecurityIgnoreConfigProperties;
+import com.example.properties.AppProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final UserContextInterceptor userContextInterceptor;
-    private final AppConfigSecurityIgnoreConfigProperties appConfigSecurityIgnoreConfigProperties;
+    private final AppProperties appProperties;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
         filter.setEncoding("UTF-8");
         filter.setForceEncoding(true);
         registry.addInterceptor(userContextInterceptor)
-                .excludePathPatterns(appConfigSecurityIgnoreConfigProperties.getUrls())
+                .excludePathPatterns(appProperties.getConfig().getSecurity().getIgnore().getUrls())
                 .addPathPatterns("/**");
     }
 

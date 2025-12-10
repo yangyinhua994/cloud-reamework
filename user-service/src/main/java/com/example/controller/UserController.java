@@ -66,17 +66,26 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
     }
 
     @Override
-    protected void postUpdate(User entity, UserDTO dto) {
+    protected void postUpdate(User entity) {
+        // 更新后置，将数据保存到缓存中
         redisUtil.set(RedisConstant.User.USER_ID, entity.getId(), entity);
     }
 
     @Override
     protected User preGet(Long id) {
+        // 查询前置，先查询缓存是否存在该数据
         return (User) redisUtil.get(RedisConstant.User.USER_ID, id);
     }
 
     @Override
     protected void postGet(User entity) {
+        // 查询后置，将数据保存到缓存中
         redisUtil.set(RedisConstant.User.USER_ID, entity.getId(), entity);
+    }
+
+    @Override
+    protected void postDelete(Long id) {
+        // 删除后置，将数据从缓存中删除
+        redisUtil.delete(RedisConstant.User.USER_ID, id);
     }
 }

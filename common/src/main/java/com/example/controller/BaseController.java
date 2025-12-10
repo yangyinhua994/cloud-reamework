@@ -1,19 +1,16 @@
 package com.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.convert.BaseConvert;
 import com.example.dto.BaseDTO;
 import com.example.entity.BaseEntity;
-import com.example.entity.User;
 import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Add;
 import com.example.groups.Update;
-import com.example.holder.UserContextHolder;
 import com.example.response.Response;
 import com.example.vo.BaseVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
@@ -22,10 +19,7 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
-import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 @Validated
 @Data
@@ -104,8 +98,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         }
         preUpdate(dto);
         T entity = convert.dtoToEntity(dto);
-        service.updateById(entity);
-        postUpdate(service.getById(entity.getId()), dto);
+        update(entity);
+        // 暂时没想到能用到的地方，注释掉
+        // postUpdate(service.getById(entity.getId()), dto);
         return Response.success();
     }
 
@@ -122,7 +117,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
         t.setDeleted(DeleteEnum.DELETED.getCode());
-        getService().updateById(t);
+        update(t);
         return Response.success();
     }
 
@@ -134,9 +129,21 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         if (id == null) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
+        preDelete(id);
         if (!service.removeById(id)) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
+        postDelete(id);
+        return Response.success();
+    }
+
+
+    public Response<Void> update(T entity) {
+        if (entity == null) {
+            return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
+        }
+        service.updateById(entity);
+        postUpdate(entity);
         return Response.success();
     }
 
@@ -158,6 +165,12 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
 
     protected T preGet(Long id) {
         return null;
+    }
+
+    protected void preDelete(Long id) {
+    }
+
+    protected void postDelete(Long id) {
     }
 
     protected void postGet(T entity) {
@@ -197,4 +210,12 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     protected void postUpdate(T entity, D dto) {
         // 子类可重写实现业务逻辑
     }
+
+    /**
+     * 更新后处理（子类可重写）
+     */
+    protected void postUpdate(T entity) {
+        // 子类可重写实现业务逻辑
+    }
+
 }
