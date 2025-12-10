@@ -8,13 +8,10 @@ import com.example.enums.ResponseMessageEnum;
 import com.example.mapper.UserMapper;
 import com.example.response.Response;
 import com.example.service.UserService;
-import com.example.util.StringUtils;
+import com.example.utils.StringUtils;
 import com.example.vo.OrderVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

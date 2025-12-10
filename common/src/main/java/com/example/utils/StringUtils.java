@@ -1,4 +1,4 @@
-package com.example.util;
+package com.example.utils;
 
 public class StringUtils extends com.alibaba.nacos.api.utils.StringUtils {
 

@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.constant.RedisConstant;
 import com.example.convert.UserConvert;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
@@ -7,7 +8,8 @@ import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.response.Response;
 import com.example.service.UserService;
-import com.example.util.StringUtils;
+import com.example.utils.RedisUtil;
+import com.example.utils.StringUtils;
 import com.example.utils.ObjectUtils;
 import com.example.utils.PasswordUtil;
 import com.example.vo.OrderVO;
@@ -23,8 +25,11 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class UserController extends BaseController<User, UserDTO, UserVO, UserService, UserConvert> {
 
-    public UserController(UserService service, UserConvert convert) {
+    private final RedisUtil redisUtil;
+
+    public UserController(UserService service, UserConvert convert, RedisUtil redisUtil) {
         super(service, convert);
+        this.redisUtil = redisUtil;
     }
 
     /**
@@ -40,7 +45,7 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
     protected User preAdd(UserDTO dto) {
         User user = super.service.getByPhone(dto.getPhone());
         if (ObjectUtils.isNotEmpty(user)) {
-            if (user.isDelete()) {
+            if (DeleteEnum.isDeleted(user.getDeleted())) {
                 user.setDeleted(DeleteEnum.NOT_DELETED.getCode());
                 return user;
             }
@@ -60,4 +65,18 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
         }
     }
 
+    @Override
+    protected void postUpdate(User entity, UserDTO dto) {
+        redisUtil.set(RedisConstant.User.USER_ID, entity.getId(), entity);
+    }
+
+    @Override
+    protected User preGet(Long id) {
+        return (User) redisUtil.get(RedisConstant.User.USER_ID, id);
+    }
+
+    @Override
+    protected void postGet(User entity) {
+        redisUtil.set(RedisConstant.User.USER_ID, entity.getId(), entity);
+    }
 }

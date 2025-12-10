@@ -6,7 +6,6 @@ import com.example.convert.UserConvert;
 import com.example.dto.FinanceUserDTO;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
-import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Login;
 import com.example.response.Response;

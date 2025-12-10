@@ -22,6 +22,7 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -79,10 +80,15 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         if (id == null) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
-        T entity = service.getById(id);
+        T entity = preGet(id);
+        if (entity != null) {
+            return Response.success(convert.entityToVo(entity));
+        }
+        entity = service.getById(id);
         if (entity == null) {
             return Response.fail("数据不存在");
         }
+        postGet(entity);
         return Response.success(convert.entityToVo(entity));
     }
 
@@ -99,7 +105,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         preUpdate(dto);
         T entity = convert.dtoToEntity(dto);
         service.updateById(entity);
-        postUpdate(entity, dto);
+        postUpdate(service.getById(entity.getId()), dto);
         return Response.success();
     }
 
@@ -135,7 +141,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     }
 
     public LambdaQueryWrapper<T> buildBaseQueryWrapper(D dto) {
-        return new LambdaQueryWrapper<>(service.getEntityClass())
+        return new NotNollLambdaQueryWrapper<>(service.getEntityClass())
                 .eq(T::getId, dto.getId())
                 .eq(T::getDeleted, dto.getDeleted())
                 .eq(T::getVersion, dto.getVersion())
@@ -148,6 +154,13 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     protected T preAdd(D dto) {
         return getConvert().dtoToEntity(dto);
+    }
+
+    protected T preGet(Long id) {
+        return null;
+    }
+
+    protected void postGet(T entity) {
     }
 
     /**

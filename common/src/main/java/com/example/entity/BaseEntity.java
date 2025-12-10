@@ -37,12 +37,4 @@ public class BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private Integer version;
 
-    public boolean isDelete() {
-        return DeleteEnum.isDeleted(deleted);
-    }
-
-    public boolean isNotDelete() {
-        return DeleteEnum.isNotDelete(deleted);
-    }
-
 }

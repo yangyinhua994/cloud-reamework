@@ -2,7 +2,7 @@ package com.example.interceptor;
 
 import com.example.entity.User;
 import com.example.holder.UserContextHolder;
-import com.example.util.StringUtils;
+import com.example.utils.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

@@ -1,0 +1,57 @@
+networks:
+  app-network:
+    driver: bridge
+    name: app-network
+
+services:
+  rocketmq-namesrv:
+    image: apache/rocketmq:4.9.7
+    container_name: rocketmq-namesrv
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - "9876:9876"
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPT_EXT: "-Xms512m -Xmx512m -Xmn256m"  # JVM内存配置，可根据服务器调整
+    volumes:
+      - ./rocketmq/namesrv/logs:/home/rocketmq/logs  # 日志持久化
+    command: sh mqnamesrv
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9876"]  # 健康检查
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  rocketmq-broker:
+    image: apache/rocketmq:4.9.7
+    container_name: rocketmq-broker
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - "10909:10909"  # Broker对外服务端口
+      - "10911:10911"  # Broker客户端通信端口
+      - "10912:10912"  # Broker内部通信端口
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPT_EXT: "-Xms1g -Xmx1g -Xmn512m"  # JVM内存配置，可根据服务器调整
+      NAMESRV_ADDR: "rocketmq-namesrv:9876"    # 指定NameServer地址
+      BROKER_NAME: "broker-a"                  # Broker名称
+      BROKER_ID: 0                             # Broker ID，0表示Master
+    volumes:
+      - ./rocketmq/broker/logs:/home/rocketmq/logs    # 日志持久化
+      - ./rocketmq/broker/store:/home/rocketmq/store  # 消息存储持久化
+      - ./rocketmq/broker/conf/broker.conf:/home/rocketmq/conf/broker.conf  # 自定义Broker配置
+    command: sh mqbroker -c /home/rocketmq/conf/broker.conf  # 指定配置文件启动
+    depends_on:
+      rocketmq-namesrv:
+        condition: service_healthy  # 等待NameServer健康后启动
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z localhost 10911 || exit 1"]  # 健康检查
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s  # Broker启动较慢，延长启动等待时间
