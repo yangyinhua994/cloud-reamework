@@ -7,6 +7,7 @@ import com.example.entity.BaseEntity;
 import com.example.entity.User;
 import com.example.utils.RedisUtil;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -38,5 +39,11 @@ public class UserChangesListener extends DatabaseChangesCallback<User> {
     @Override
     public Class<User> getEntityClass() {
         return User.class;
+    }
+
+    @Override
+    @PreDestroy
+    public void removeCallback() {
+        super.removeCallback();
     }
 }
