@@ -52,7 +52,6 @@ public class UserContextHolder {
         return get(SERVER_NAME);
     }
 
-
     public static void clear() {
         USER_CONTEXT.remove();
     }
