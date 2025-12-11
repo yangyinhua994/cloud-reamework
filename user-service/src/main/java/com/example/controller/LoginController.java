@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.example.client.FinanceClient;
 import com.example.constant.GlobalTransactionalConstant;
 import com.example.convert.UserConvert;
@@ -42,6 +43,7 @@ public class LoginController {
     /**
      * 用户登录
      */
+    @SentinelResource(value = "/user/login", blockHandler = "loginBlockHandler", fallback = "loginFallbackHandler")
     @PostMapping("/login")
     public Response<UserVO> login(@RequestBody @Validated(Login.class) UserDTO dto) {
         User user = userService.getByPhone(dto.getPhone());
@@ -75,10 +77,19 @@ public class LoginController {
                 .username(dto.getUsername())
                 .password(dto.getPassword()).build();
         Response<FinanceUserVO> response = financeClient.register(financeUserDTO);
-        if (response.isFail()){
+        if (response.isFail()) {
             Response.error(response.getMessage());
         }
         return Response.success();
+    }
+
+    // 限流/熔断处理
+    public Response<UserVO> loginBlockHandler(UserDTO dto, Throwable e) {
+        return Response.fail("登录接口限流/熔断");
+    }
+
+    public Response<UserVO> loginFallbackHandler(UserDTO dto, Throwable e) {
+        return Response.fail("登录接口降级");
     }
 
 }

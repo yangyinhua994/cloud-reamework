@@ -13,6 +13,7 @@ public enum ResponseMessageEnum {
     DATA_NOT_EXIST("数据不存在"),
     ID_NOT_EXIST("ID有误"),
     PHONE_NOT_EXIST("电话不能为空"),
+    SERVICE_NOT_AVAILABLE("服务不可用"),
     ;
 
     private final String message;
@@ -21,4 +22,4 @@ public enum ResponseMessageEnum {
         this.message = message;
     }
 
-}
+    }

@@ -1,0 +1,26 @@
+networks:
+  app-network:
+    driver: bridge
+    name: app-network
+
+services:
+  sentinel-dashboard:
+    # 基于本地Dockerfile构建镜像
+    build: .
+    # 自定义镜像名称和标签（便于后续管理）
+    image: sentinel-dashboard:1.8.7
+    container_name: sentinel
+    ports:
+      - "8080:8080"  # 宿主机端口:容器端口（若8080被占用，改宿主机端口如8180:8080）
+    environment:
+      # 覆盖默认环境变量（账号密码/端口）
+      - SENTINEL_DASHBOARD_AUTH_USERNAME=sentinel
+      - SENTINEL_DASHBOARD_AUTH_PASSWORD=sentinel
+      - SERVER_PORT=8080
+    restart: always  # 服务器重启后自动启动容器
+    networks:
+      - app-network  # 加入你原有的应用网络
+    # 可选：日志/时区持久化（避免容器时区与服务器不一致、日志丢失）
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # 同步服务器时区
+      - ./sentinel-logs:/app/logs         # 持久化控制台日志（自动创建目录）
