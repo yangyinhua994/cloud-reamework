@@ -12,10 +12,11 @@ public class UserContextHolder {
     private static final ThreadLocal<Map<String, Object>> USER_CONTEXT = new ThreadLocal<>();
 
     private static void set(String key, String value) {
-        if (USER_CONTEXT.get() == null) {
-            USER_CONTEXT.set(new HashMap<>());
+        Map<String, Object> map = USER_CONTEXT.get();
+        if (map == null) {
+            map = new HashMap<>();
         }
-        USER_CONTEXT.get().put(key, value);
+        map.put(key, value);
     }
 
     private static String get(String key) {
