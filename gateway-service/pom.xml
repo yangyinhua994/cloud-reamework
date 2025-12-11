@@ -30,7 +30,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
-        <!-- WebFlux（必须，替代 Spring MVC） -->
+        <!-- WebFlux（替代 Spring MVC） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>

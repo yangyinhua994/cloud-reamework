@@ -1,17 +1,56 @@
 package com.example.holder;
 
-import com.example.entity.User;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserContextHolder {
-    private static final ThreadLocal<User> USER_CONTEXT = new ThreadLocal<>();
 
-    public static void setUser(User user) {
-        USER_CONTEXT.set(user);
+    public static final String USER_ID = "userId";
+    public static final String USERNAME = "username";
+    public static final String SERVER_NAME = "serverName";
+
+    private static final ThreadLocal<Map<String, Object>> USER_CONTEXT = new ThreadLocal<>();
+
+    private static void set(String key, String value) {
+        if (USER_CONTEXT.get() == null) {
+            USER_CONTEXT.set(new HashMap<>());
+        }
+        USER_CONTEXT.get().put(key, value);
     }
 
-    public static User getUser() {
-        return USER_CONTEXT.get();
+    private static String get(String key) {
+        Map<String, Object> map = USER_CONTEXT.get();
+        if (map == null) {
+            return "";
+        }
+        Object o = map.get(key);
+        return o == null ? null : o.toString();
     }
+
+    public static void setUserId(String userId) {
+        set(USER_ID, userId);
+    }
+
+    public static void setUsername(String username) {
+        set(USERNAME, username);
+    }
+
+    public static void setServerName(String serverName) {
+        set(SERVER_NAME, serverName);
+    }
+
+    public static String getUserId() {
+        return get(USER_ID);
+    }
+
+    public static String getUsername() {
+        return get(USERNAME);
+    }
+
+    public static String getServerName() {
+        return get(SERVER_NAME);
+    }
+
 
     public static void clear() {
         USER_CONTEXT.remove();

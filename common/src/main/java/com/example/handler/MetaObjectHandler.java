@@ -20,8 +20,7 @@ public class MetaObjectHandler implements com.baomidou.mybatisplus.core.handlers
         this.strictInsertFill(metaObject, "version", Integer.class, 1);
         this.strictInsertFill(metaObject, "deleted", Integer.class, DeleteEnum.NOT_DELETED.getCode());
 
-        User user = UserContextHolder.getUser();
-        String username = user == null ? "未知用户" : user.getUsername();
+        String username = UserContextHolder.getUsername() == null ? "未知用户" : UserContextHolder.getUsername();
         this.strictInsertFill(metaObject, "createUser", String.class, username);
         this.strictInsertFill(metaObject, "updateUser", String.class, username);
 
@@ -30,8 +29,7 @@ public class MetaObjectHandler implements com.baomidou.mybatisplus.core.handlers
     @Override
     public void updateFill(MetaObject metaObject) {
         this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
-        User user = UserContextHolder.getUser();
-        String username = user == null ? "未知用户" : user.getUsername();
+        String username = UserContextHolder.getUsername() == null ? "未知用户" : UserContextHolder.getUsername();
         this.strictUpdateFill(metaObject, "updateUser", String.class, username);
 
     }

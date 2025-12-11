@@ -2,6 +2,7 @@ package com.example.filter;
 
 import com.alibaba.nacos.api.utils.StringUtils;
 import com.example.properties.AppConfigSecurityIgnoreConfigProperties;
+import com.example.properties.SpringProperties;
 import com.example.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,10 +29,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenParseFilter implements GlobalFilter, Ordered {
 
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String USER_ID = "userId";
+    public static final String USERNAME = "username";
+    public static final String SERVER_NAME = "serverName";
+
+
     private final AppConfigSecurityIgnoreConfigProperties appConfigSecurityIgnoreConfigProperties;
     private final JwtUtil jwtUtil;
     // 注入Jackson的ObjectMapper（SpringBoot默认会自动配置）
     private final ObjectMapper objectMapper;
+    private final SpringProperties springProperties;
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -43,16 +51,17 @@ public class TokenParseFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+        String token = exchange.getRequest().getHeaders().getFirst(AUTHORIZATION);
         try {
             if (!StringUtils.isBlank(token) && jwtUtil.validateToken(token)) {
                 String userId = jwtUtil.getIdFromToken(token).toString();
-                String username = jwtUtil.get(token, "username").toString();
+                String username = jwtUtil.get(token, USERNAME).toString();
                 if (!StringUtils.isEmpty(userId) && !StringUtils.isEmpty(username)) {
                     String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
                     ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                            .header("userId", userId)
-                            .header("username", encodedUsername)
+                            .header(USER_ID, userId)
+                            .header(USERNAME, encodedUsername)
+                            .header(SERVER_NAME, springProperties.getApplication().getName())
                             .build();
                     return chain.filter(exchange.mutate().request(modifiedRequest).build());
                 }
@@ -66,6 +75,7 @@ public class TokenParseFilter implements GlobalFilter, Ordered {
 
     /**
      * 构建未授权的JSON响应
+     *
      * @param response 响应对象
      * @return Mono<Void>
      */
@@ -79,7 +89,7 @@ public class TokenParseFilter implements GlobalFilter, Ordered {
 
         // 构建响应体的JSON数据
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("code", HttpStatus.UNAUTHORIZED.value()); // 401
+        responseBody.put("code", HttpStatus.UNAUTHORIZED.value());
         responseBody.put("message", "请先登录");
         responseBody.put("success", false);
 
