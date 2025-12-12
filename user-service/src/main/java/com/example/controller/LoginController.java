@@ -1,8 +1,8 @@
 package com.example.controller;
 
-import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.example.client.FinanceClient;
 import com.example.constant.GlobalTransactionalConstant;
+import com.example.constant.RedisConstant;
 import com.example.convert.UserConvert;
 import com.example.dto.FinanceUserDTO;
 import com.example.dto.UserDTO;
@@ -14,6 +14,7 @@ import com.example.service.UserService;
 import com.example.utils.JwtUtil;
 import com.example.utils.ObjectUtils;
 import com.example.utils.PasswordUtil;
+import com.example.utils.RedisUtil;
 import com.example.vo.FinanceUserVO;
 import com.example.vo.UserVO;
 import io.seata.spring.annotation.GlobalTransactional;
@@ -39,17 +40,23 @@ public class LoginController {
     private final UserService userService;
     private final UserConvert userConvert;
     private final FinanceClient financeClient;
+    private final RedisUtil redisUtil;
 
     /**
      * 用户登录
      */
-    @SentinelResource(value = "/user/login", blockHandler = "loginBlockHandler", fallback = "loginFallbackHandler")
+    // @SentinelResource(value = "/user/login", blockHandler = "loginBlockHandler", fallback = "loginFallbackHandler")
     @PostMapping("/login")
     public Response<UserVO> login(@RequestBody @Validated(Login.class) UserDTO dto) {
-        User user = userService.getByPhone(dto.getPhone());
+        User user = (User) redisUtil.get(RedisConstant.User.USER_PHONE, dto.getPhone());
         if (ObjectUtils.isEmpty(user)) {
-            Response.error(ResponseMessageEnum.USER_NOT_EXIST);
+            user = userService.getByPhone(dto.getPhone());
+            if (ObjectUtils.isEmpty(user)) {
+                Response.error(ResponseMessageEnum.USER_NOT_EXIST);
+            }
+            redisUtil.set(RedisConstant.User.USER_PHONE, dto.getPhone(), user);
         }
+
         if (!PasswordUtil.verifyPassword(dto.getPassword(), user.getPassword())) {
             return Response.fail(PHONE_OR_PASSWORD_ERROR);
         }

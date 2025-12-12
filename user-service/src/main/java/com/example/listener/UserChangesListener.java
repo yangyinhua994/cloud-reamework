@@ -27,7 +27,8 @@ public class UserChangesListener extends DatabaseChangesCallback<User> {
 
     @Override
     public void onChanged(User entity) {
-        redisUtil.delete(RedisConstant.User.USER_ID, entity.getId());
+        redisUtil.deleteKeys(RedisConstant.User.USER_ID, entity.getId());
+        redisUtil.deleteKeys(RedisConstant.User.USER_PHONE, entity.getPhone());
     }
 
     @Override

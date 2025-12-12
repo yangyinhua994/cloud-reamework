@@ -66,7 +66,7 @@ public class PasswordUtil {
 
             // 比较两个哈希值是否相等
             return slowEquals(storedHash, testHash);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (Exception e) {
             return false;
         }
     }
