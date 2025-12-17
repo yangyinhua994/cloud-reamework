@@ -15,6 +15,7 @@ public class UserContextHolder {
         Map<String, Object> map = USER_CONTEXT.get();
         if (map == null) {
             map = new HashMap<>();
+            USER_CONTEXT.set(map);
         }
         map.put(key, value);
     }

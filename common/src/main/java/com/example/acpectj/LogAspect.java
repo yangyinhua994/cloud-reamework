@@ -9,7 +9,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -36,7 +35,6 @@ public class LogAspect {
         TIME_THREAD_LOCAL.set(System.currentTimeMillis());
     }
 
-    @Async
     public void handlerAfterReturning(JoinPoint joinPoint, Object result) {
         String className = joinPoint.getTarget().getClass().getName();
         RequestLog requestLog = RequestLog.builder()
