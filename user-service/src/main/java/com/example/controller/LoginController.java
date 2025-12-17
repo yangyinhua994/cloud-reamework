@@ -42,6 +42,11 @@ public class LoginController {
     private final FinanceClient financeClient;
     private final RedisUtil redisUtil;
 
+    @RequestMapping("/test")
+    public Response<UserVO> test(String name) {
+        return Response.success();
+    }
+
     /**
      * 用户登录
      */

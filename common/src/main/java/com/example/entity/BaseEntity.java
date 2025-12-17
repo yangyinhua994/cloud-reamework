@@ -25,11 +25,17 @@ public class BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private String createUser;
 
+    @TableField(fill = FieldFill.INSERT)
+    private String createUserId;
+
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUser;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateUserId;
 
     @TableField(fill = FieldFill.INSERT)
     private Integer deleted;

@@ -23,6 +23,9 @@ public class MetaObjectHandler implements com.baomidou.mybatisplus.core.handlers
         String username = UserContextHolder.getUsername() == null ? "未知用户" : UserContextHolder.getUsername();
         this.strictInsertFill(metaObject, "createUser", String.class, username);
         this.strictInsertFill(metaObject, "updateUser", String.class, username);
+        String userId = UserContextHolder.getUserId() == null ? "" : UserContextHolder.getUserId();
+        this.strictInsertFill(metaObject, "createUserId", String.class, userId);
+        this.strictInsertFill(metaObject, "updateUserId", String.class, userId);
 
     }
 
@@ -31,6 +34,9 @@ public class MetaObjectHandler implements com.baomidou.mybatisplus.core.handlers
         this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
         String username = UserContextHolder.getUsername() == null ? "未知用户" : UserContextHolder.getUsername();
         this.strictUpdateFill(metaObject, "updateUser", String.class, username);
+
+        String userId = UserContextHolder.getUserId() == null ? "" : UserContextHolder.getUserId();
+        this.strictInsertFill(metaObject, "updateUserId", String.class, userId);
 
     }
 
