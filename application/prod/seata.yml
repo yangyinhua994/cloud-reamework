@@ -1,0 +1,34 @@
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: default_tx_group
+
+  # 注册中心
+  registry:
+    type: nacos
+    nacos:
+      application: seata-service
+      server-addr: ${server-addr}:8848
+      group: DEFAULT_GROUP
+      namespace: public
+      cluster: default
+      username: nacos   # 添加Nacos用户名
+      password: nacos   # 添加Nacos密码
+
+  # 配置中心
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${server-addr}:8848
+      group: DEFAULT_GROUP
+      namespace: public
+      username: nacos   # 添加Nacos用户名
+      password: nacos   # 添加Nacos密码
+      data-id: seataServer.properties
+
+  # 事务组映射（关键配置）
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+    grouplist:
+      default: ${server-addr}:8091

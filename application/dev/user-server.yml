@@ -1,0 +1,5 @@
+server:
+    port: 9528
+spring:
+  datasource:
+    database: user

@@ -40,28 +40,10 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * 从token中提取用户ID
-     *
-     * @param token JWT token
-     * @return 用户ID
-     */
-    public Object getIdFromToken(String token) {
+    public String get(String token, String key, String defaultValue) {
         Claims claims = parseToken(token);
-        return claims.get("id");
-    }
-
-
-    /**
-     * 从token中提取指定key的值
-     *
-     * @param token JWT token
-     * @param key 键名
-     * @return 值
-     */
-    public Object get(String token, String key) {
-        Claims claims = parseToken(token);
-        return claims.get(key);
+        Object o = claims.get(key);
+        return o == null ? defaultValue : o.toString();
     }
 
 
@@ -103,9 +85,9 @@ public class JwtUtil {
     /**
      * 从token中提取指定claim
      *
-     * @param token JWT token
+     * @param token          JWT token
      * @param claimsResolver claim解析器
-     * @param <T> 返回类型
+     * @param <T>            返回类型
      * @return claim值
      */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {

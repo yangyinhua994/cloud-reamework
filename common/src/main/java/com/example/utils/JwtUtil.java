@@ -1,6 +1,7 @@
 package com.example.utils;
 
 import com.example.entity.User;
+import com.example.holder.UserContextHolder;
 import com.example.properties.AppConfigSecurityJwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -48,8 +49,8 @@ public class JwtUtil {
 
     public String generateToken(User user) {
         Map<String, String> claims = new HashMap<>();
-        claims.put("id", user.getId().toString());
-        claims.put("username", user.getUsername());
+        claims.put(UserContextHolder.USER_ID, user.getId().toString());
+        claims.put(UserContextHolder.USERNAME, user.getUsername());
         return generateToken(claims);
     }
 
@@ -74,7 +75,7 @@ public class JwtUtil {
      * 从token中提取指定key的值
      *
      * @param token JWT token
-     * @param key 键名
+     * @param key   键名
      * @return 值
      */
     public String get(String token, String key) {

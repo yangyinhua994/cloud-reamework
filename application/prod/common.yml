@@ -1,0 +1,156 @@
+server-addr: 47.109.137.128
+
+server:
+  tomcat:
+    uri-encoding: UTF-8
+  prot: 9528
+
+spring:
+  datasource:
+    addr: 47.109.137.128
+    port: 3306
+    username: root
+    password: 1234qwerQWER
+    database: user
+    url: jdbc:mysql://${spring.datasource.addr}:${spring.datasource.port}/${spring.datasource.database}?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 20
+      minimum-idle: 5
+      max-lifetime: 1800000
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${server-addr}:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+      config:
+        server-addr: ${server-addr}:8848
+        file-extension: yml
+        namespace: dev
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+        refresh-enabled: true
+    sentinel:
+      # 1. 连接 Sentinel 控制台（Docker 部署的地址）
+      transport:
+        dashboard: ${server-addr}:8080  # 复用服务器地址变量，Sentinel 控制台端口8080
+        port: 8719                      # 客户端与控制台通信端口（默认8719，占用自动+1）
+        heartbeat-interval-ms: 10000    # 心跳间隔（优化：默认10秒，避免频繁通信）
+      # 2. 取消懒加载（启动即初始化 Sentinel，无需首次访问接口）
+      eager: true
+      # 3. 自定义限流异常页面/处理器（可选）
+      web-context-unify: true           # 上下文统一（Web 场景必开）
+      block-page: /error/block          # 限流后跳转的自定义页面（可选，需自行实现）
+      # 4. Sentinel 规则持久化到 Nacos（核心：避免重启丢失规则）
+      datasource:
+        # 4.1 流控规则（flow）
+        flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}  # 复用 Nacos 地址
+            data-id: ${spring.application.name}-sentinel-flow        # 规则DataID（按应用名区分）
+            group-id: ${spring.cloud.nacos.discovery.group}           # 复用 Nacos 分组
+            namespace: ${spring.cloud.nacos.discovery.namespace}      # 复用 Nacos 命名空间
+            username: ${spring.cloud.nacos.discovery.username}        # 复用 Nacos 账号
+            password: ${spring.cloud.nacos.discovery.password}        # 复用 Nacos 密码
+            data-type: json                                           # 规则格式：JSON
+            rule-type: flow                                           # 规则类型：流控
+        # 4.2 熔断降级规则（degrade）
+        degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            data-id: ${spring.application.name}-sentinel-degrade
+            group-id: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            username: ${spring.cloud.nacos.discovery.username}
+            password: ${spring.cloud.nacos.discovery.password}
+            data-type: json
+            rule-type: degrade
+        # 4.3 热点参数规则（可选）
+        param-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            data-id: ${spring.application.name}-sentinel-param
+            group-id: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            username: ${spring.cloud.nacos.discovery.username}
+            password: ${spring.cloud.nacos.discovery.password}
+            data-type: json
+            rule-type: param-flow
+
+  data:
+    redis:
+      host: ${server-addr}
+      port: 6379
+      password: 1234qwerQWER
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 5000ms
+        shutdown-timeout: 100ms
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  rabbitmq:
+    host: ${server-addr}
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    # 连接池配置（可选）
+    connection-timeout: 15000
+    # 消息确认机制
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: com.example.entity
+  global-config:
+    db-config:
+      table-prefix: t_
+      id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+app:
+  config:
+    enable_cache: true
+    # Redis缓存配置
+    redis:
+      cache-prefix: app
+      default-expire: 3600  # 默认缓存时间1小时
+      user-expire: 1800     # 用户相关缓存30分钟
+      token-expire: 7200    # token缓存2小时
+    # 业务配置
+    upload:
+      max-size: 10MB
+      allowed-types: jpg,jpeg,png,gif
+    security:
+      jwt:
+        secret: your-32-characters-long-secret-key-1234
+        expire_minute: 12000
+      ignore:
+        urls:
+          - /user/login
+          - /user/register
+          - /actuator/**
+          - /swagger-ui/**
+          - /v3/api-docs/**
+          - /webjars/**
+          - /favicon.ico
+          - /finance/user/register
