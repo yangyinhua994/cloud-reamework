@@ -2,18 +2,17 @@ package com.example.dto;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.example.groups.Delete;
-import com.example.groups.Update;
+import com.example.groups.UpdateById;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 public class BaseDTO {
 
     @TableId
-    @NotNull(message = "ID不能为空", groups = {Update.class, Delete.class})
+    @NotNull(message = "ID不能为空", groups = {UpdateById.class, Delete.class})
     private Long id;
     private LocalDateTime createTime;
     private String createUser;

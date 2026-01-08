@@ -1,5 +1,0 @@
-server:
-    port: 9532
-spring:
-  datasource:
-    database: base

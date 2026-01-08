@@ -8,4 +8,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class AppConfigSecurityJwtProperties {
     private String secret;
     private long expireMinute;
+    private long refreshExpireMinute;
 }

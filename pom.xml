@@ -30,11 +30,11 @@
 
     <modules>
         <module>common</module>
-        <module>base-service</module>
         <module>gateway-service</module>
-        <module>user-service</module>
-        <module>order-service</module>
-        <module>finance-service</module>
+        <module>base-service/base-service-api</module>
+        <module>base-service/base-service-biz</module>
+        <module>user-service/user-service-api</module>
+        <module>user-service/user-service-biz</module>
     </modules>
 
     <properties>

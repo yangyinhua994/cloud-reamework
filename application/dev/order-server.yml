@@ -1,5 +1,0 @@
-server:
-    port: 9529
-spring:
-  datasource:
-    database: order

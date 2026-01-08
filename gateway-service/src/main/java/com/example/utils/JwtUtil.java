@@ -23,20 +23,17 @@ public class JwtUtil {
 
     private final AppConfigSecurityJwtProperties appConfigSecurityJwtProperties;
 
-    /**
-     * 解析JWT token并提取claims
-     *
-     * @param token JWT token
-     * @return Claims对象
-     */
     public Claims parseToken(String token) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(appConfigSecurityJwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
-
-            return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .clockSkewSeconds(60)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (Exception e) {
-            log.error("解析JWT token失败: {}", e.getMessage(), e);
-            throw new RuntimeException("Token解析失败", e);
+            return null;
         }
     }
 
@@ -61,15 +58,13 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * 判断token是否过期
-     *
-     * @param token JWT token
-     * @return 是否过期
-     */
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+        if (expiration == null) {
+            return true;
+        }
+        Date now = new Date(System.currentTimeMillis() - 60000);
+        return expiration.before(now);
     }
 
     /**
@@ -92,6 +87,9 @@ public class JwtUtil {
      */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = parseToken(token);
+        if (claims == null){
+            return null;
+        }
         return claimsResolver.apply(claims);
     }
 }
