@@ -1,14 +1,14 @@
-package com.example.service.impl;
+package com.example.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.example.convert.UserConvert;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
 import com.example.mapper.UserMapper;
-import com.example.service.UserService;
+import com.example.service.impl.BaseServiceImpl;
+import com.example.utils.CollectionUtils;
 import com.example.utils.JwtUtil;
 import com.example.utils.PasswordUtil;
 import com.example.vo.UserVO;
@@ -18,16 +18,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
-public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements UserService {
+@RequiredArgsConstructor
+public class LoginServiceImpl extends BaseServiceImpl<UserMapper, User> implements LoginService {
 
     private final UserConvert userConvert;
     private final JwtUtil jwtUtil;
 
     @Override
     public UserVO login(UserDTO dto) {
-        List<User> list = getByUserName(dto.getUsername());
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(User.class)
+                .eq(User::getUsername, dto.getUsername());
+        List<User> list = list(lambdaQueryWrapper);
         if (CollectionUtils.isEmpty(list)) {
             ApiException.error(ResponseMessageEnum.USER_NOT_EXIST);
         }
@@ -40,37 +42,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             ApiException.error(ResponseMessageEnum.ACCOUNT_OR_PASSWORD_ERROR);
         }
         UserVO userVO = userConvert.entityToVo(user);
-        userVO.setToken(jwtUtil.generateToken(user));
+        String token = jwtUtil.generateToken(user);
+        userVO.setToken(token);
         userVO.setRefreshToken(jwtUtil.generateRefreshToken(user));
         return userVO;
 
-    }
-
-    @Override
-    public UserVO register(UserDTO dto) {
-        List<User> list = getByUserName(dto.getUsername());
-        if (!list.isEmpty()) {
-            ApiException.error(ResponseMessageEnum.USER_EXIST);
-        }
-        User user = userConvert.dtoToEntity(dto);
-        user.setPassword(PasswordUtil.encryptPassword(dto.getPassword()));
-        save(user);
-        return userConvert.entityToVo(user);
-    }
-
-    @Override
-    public UserVO refreshToken(UserDTO dto) {
-        String refreshToken = dto.getRefreshToken();
-        if (jwtUtil.isTokenExpired(refreshToken)){
-            ApiException.error(ResponseMessageEnum.REFRESH_TOKEN_ERROR);
-        }
-        return jwtUtil.refreshToken(refreshToken);
-    }
-
-    public List<User> getByUserName(String username) {
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(User.class)
-                .eq(User::getUsername, username);
-        return list(lambdaQueryWrapper);
     }
 
 }

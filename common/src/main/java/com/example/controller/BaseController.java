@@ -10,7 +10,7 @@ import com.example.entity.BaseEntity;
 import com.example.enums.DeleteEnum;
 import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Add;
-import com.example.groups.Update;
+import com.example.groups.UpdateById;
 import com.example.response.Response;
 import com.example.vo.BaseVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
@@ -58,8 +58,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     /**
      * 分页获取
      */
-    @GetMapping("/query/page/list")
-    public Response<Page<V>> pageList(D dto) {
+    @GetMapping("/query/page")
+    public Response<Page<V>> page(D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
         prePageList(dto, lambdaQueryWrapper);
         Page<T> page = service.page(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);
@@ -90,7 +90,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      * 修改
      */
     @PutMapping("/update")
-    public Response<Void> update(@RequestBody @Validated(Update.class) D dto) {
+    public Response<Void> update(@RequestBody @Validated(UpdateById.class) D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(service.getEntityClass());
         lambdaQueryWrapper.eq(T::getId, dto.getId());
         if (!service.exists(lambdaQueryWrapper)) {

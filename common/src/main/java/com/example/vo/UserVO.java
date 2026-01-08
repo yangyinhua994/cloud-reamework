@@ -1,20 +1,16 @@
 package com.example.vo;
 
-import com.example.dto.BaseDTO;
-import com.example.groups.Add;
-import com.example.groups.Delete;
-import com.example.groups.Update;
-import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class UserVO extends BaseVO {
 
     /**
@@ -23,69 +19,17 @@ public class UserVO extends BaseVO {
     private String username;
 
     /**
-     * 昵称
+     * 用户类型 1：管理员
      */
-    private String nickname;
+    private Integer userType;
 
     /**
-     * 真实姓名
+     * 刷新 token
      */
-    private String realName;
+    private String refreshToken;
 
     /**
-     * 性别(0:未知,1:男,2:女)
+     * 访问 token
      */
-    private Integer gender;
-
-    /**
-     * 头像
-     */
-    private String avatar;
-
-    /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 微信
-     */
-    private String wechat;
-
-    /**
-     * 状态(0:禁用,1:启用)
-     */
-    private Integer status = 1;
-
-    /**
-     * 最后登录时间
-     */
-    private LocalDateTime lastLoginTime;
-
-    /**
-     * 最后登录IP
-     */
-    private String lastLoginIp;
-
-    /**
-     * 生日
-     */
-    private LocalDate birthday;
-
-    /**
-     * 地址
-     */
-    private String address;
-
-    /**
-     * 备注
-     */
-    private String remark;
-
     private String token;
 }

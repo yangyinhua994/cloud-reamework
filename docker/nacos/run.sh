@@ -1,4 +1,4 @@
-SERVER_IP="47.109.137.128"
+SERVER_IP="111.229.239.47"
 SERVER_USER="root"
 COMPOSE_CMD="docker compose"
 

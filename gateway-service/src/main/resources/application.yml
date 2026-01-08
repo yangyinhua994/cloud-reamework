@@ -1,3 +1,4 @@
+project_name: meiling
 spring:
   config:
     import:
@@ -10,8 +11,8 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 47.109.137.128:8848
-        namespace: dev
+        server-addr: 111.229.239.47:8848
+        namespace: ${project_name}-${spring.profiles.active}
         group: DEFAULT_GROUP
         username: nacos
         password: nacos

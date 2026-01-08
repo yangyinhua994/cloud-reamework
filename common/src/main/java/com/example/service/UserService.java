@@ -1,16 +1,13 @@
 package com.example.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.dto.UserDTO;
 import com.example.entity.User;
-import com.example.response.Response;
-import com.example.vo.OrderVO;
+import com.example.vo.UserVO;
 
-public interface UserService extends IService<User> {
-    Response<OrderVO> getOrderById(Long id);
+public interface UserService extends BaseService<User> {
+    UserVO login(UserDTO dto);
 
-    User getByPhone(String phone);
+    UserVO register(UserDTO dto);
 
-    User getByPhone(String phone, boolean throwEx);
-
-    boolean existsByPhone(String phone);
+    UserVO refreshToken(UserDTO dto);
 }
