@@ -2,11 +2,15 @@ package com.example.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class BaseVO {
 
     @TableId

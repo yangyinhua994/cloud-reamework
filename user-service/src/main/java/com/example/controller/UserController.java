@@ -6,6 +6,7 @@ import com.example.convert.UserConvert;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
 import com.example.groups.Login;
+import com.example.groups.RefreshToken;
 import com.example.groups.Register;
 import com.example.response.Response;
 import com.example.service.UserService;
@@ -39,6 +40,14 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
     @GetMapping("/register")
     public Response<UserVO> register(@RequestBody @Validated(Register.class) UserDTO dto) {
         return Response.success(service.register(dto));
+    }
+
+    /**
+     * 刷新token
+     */
+    @PostMapping("/refreshToken")
+    public Response<UserVO> refreshToken(@RequestBody @Validated(RefreshToken.class) UserDTO dto) {
+        return Response.success(service.refreshToken(dto));
     }
 
     @Override

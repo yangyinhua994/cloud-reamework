@@ -12,6 +12,7 @@ public class UserContextHolder {
     public static final String USERNAME = "username";
     public static final String SERVER_NAME = "serverName";
     public static final String USER_TYPE = "userType";
+    public static final String IS_REFRESH_TOKEN = "isRefreshToken";
 
     private static final ThreadLocal<User> USER_CONTEXT = new ThreadLocal<>();
 

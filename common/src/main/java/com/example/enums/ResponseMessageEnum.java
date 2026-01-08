@@ -17,6 +17,8 @@ public enum ResponseMessageEnum {
     PHONE_NOT_EXIST("电话不能为空"),
     SERVICE_NOT_AVAILABLE("服务不可用"),
     NO_AUTHORITY("无权访问该接口"),
+    REFRESH_TOKEN_ERROR("刷新token无效或已过期"),
+    EMPTY_PARAMETER("存在空参数"),
     ;
 
     private final String message;

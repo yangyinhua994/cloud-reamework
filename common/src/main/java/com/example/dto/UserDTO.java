@@ -34,4 +34,10 @@ public class UserDTO extends BaseDTO {
      */
     @NotNull(message = "密码不能为空", groups = {Add.class, Register.class})
     private Integer userType;
+
+    /**
+     * 刷新token
+     */
+    @NotBlank(message = "刷新token不能为空", groups = {RefreshToken.class})
+    private String refreshToken;
 }

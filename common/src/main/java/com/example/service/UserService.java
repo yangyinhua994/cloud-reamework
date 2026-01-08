@@ -8,4 +8,6 @@ public interface UserService extends BaseService<User> {
     UserVO login(UserDTO dto);
 
     UserVO register(UserDTO dto);
+
+    UserVO refreshToken(UserDTO dto);
 }

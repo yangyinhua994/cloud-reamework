@@ -42,16 +42,6 @@ public class JwtUtil {
         return claims.get(key);
     }
 
-    public Integer getInteger(String token, String key, Integer defaultValue) {
-        Object o = get(token, key);
-        try {
-            return o == null ? defaultValue : Integer.parseInt(o.toString());
-        } catch (Exception e) {
-            return defaultValue;
-        }
-
-    }
-
     public String getString(String token, String key, String defaultValue) {
         Object o = get(token, key);
         return o == null ? defaultValue : o.toString();

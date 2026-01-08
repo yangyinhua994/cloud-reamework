@@ -1,8 +1,11 @@
 package com.example.utils;
 
 import com.example.entity.User;
+import com.example.enums.ResponseMessageEnum;
+import com.example.exception.ApiException;
 import com.example.holder.UserContextHolder;
 import com.example.properties.AppConfigSecurityJwtProperties;
+import com.example.vo.UserVO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -23,18 +26,22 @@ public class JwtUtil {
 
     private final AppConfigSecurityJwtProperties appConfigSecurityJwtProperties;
 
-    /**
-     * 生成token
-     *
-     * @param claims 自定义claims
-     * @return JWT token
-     */
-    public String generateToken(Map<String, String> claims) {
+    public String generate(Long userId, String username, Integer userType, Long expireMinute) {
+        return generate(userId, username, userType, expireMinute, false);
+    }
+
+    public String generate(Long userId, String username, Integer userType, Long expireMinute, Boolean isRefreshToken) {
         try {
+            if (ObjectUtils.isExitsEmpty(userId, username, userType, expireMinute, isRefreshToken)) {
+                ApiException.error(ResponseMessageEnum.EMPTY_PARAMETER);
+            }
+            Map<String, String> claims = new HashMap<>();
+            claims.put(UserContextHolder.USER_ID, userId.toString());
+            claims.put(UserContextHolder.USERNAME, username);
+            claims.put(UserContextHolder.USER_TYPE, userType.toString());
+            claims.put(UserContextHolder.IS_REFRESH_TOKEN, isRefreshToken.toString());
+
             SecretKey key = Keys.hmacShaKeyFor(appConfigSecurityJwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
-
-            long expireMinute = appConfigSecurityJwtProperties.getExpireMinute();
-
             return Jwts.builder().claims(claims)
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis() + expireMinute * 60 * 1000)).signWith(key).compact();
@@ -42,51 +49,27 @@ public class JwtUtil {
             log.error("生成JWT token失败: {}", e.getMessage(), e);
             throw new RuntimeException("Token生成失败", e);
         }
-    }
 
-    /**
-     * 生成刷新token（较长有效期）
-     */
-    public String generateRefreshToken(Map<String, String> claims) {
-        try {
-            SecretKey key = Keys.hmacShaKeyFor(appConfigSecurityJwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
-
-            // 刷新token通常有更长的有效期，例如7天
-            long refreshExpireMinute = appConfigSecurityJwtProperties.getRefreshExpireMinute(); // 需要在配置中添加此属性
-
-            return Jwts.builder().claims(claims)
-                    .issuedAt(new Date(System.currentTimeMillis()))
-                    .expiration(new Date(System.currentTimeMillis() + refreshExpireMinute * 60 * 1000)).signWith(key).compact();
-        } catch (Exception e) {
-            log.error("生成刷新JWT token失败: {}", e.getMessage(), e);
-            throw new RuntimeException("刷新Token生成失败", e);
-        }
     }
 
     public String generateToken(User user) {
-        Map<String, String> claims = new HashMap<>();
-        claims.put(UserContextHolder.USER_ID, user.getId().toString());
-        claims.put(UserContextHolder.USERNAME, user.getUsername());
-        claims.put(UserContextHolder.USER_TYPE, user.getUserType().toString());
-        return generateToken(claims);
+        return generateToken(user.getId(), user.getUsername(), user.getUserType());
     }
 
-    /**
-     * 生成用户刷新 token
-     */
+    public String generateToken(Long userId, String username, Integer userType) {
+        Long expireMinute = appConfigSecurityJwtProperties.getExpireMinute();
+        return generate(userId, username, userType, expireMinute);
+    }
+
     public String generateRefreshToken(User user) {
-        Map<String, String> claims = new HashMap<>();
-        claims.put(UserContextHolder.USER_ID, user.getId().toString());
-        claims.put(UserContextHolder.USERNAME, user.getUsername());
-        claims.put(UserContextHolder.USER_TYPE, user.getUserType().toString());
-        return generateRefreshToken(claims);
+        return generateRefreshToken(user.getId(), user.getUsername(), user.getUserType());
     }
 
-    /**
-     * 解析JWT token并提取claims
-     *
-     * @param token JWT token
-     */
+    public String generateRefreshToken(Long userId, String username, Integer userType) {
+        Long expireMinute = appConfigSecurityJwtProperties.getRefreshExpireMinute();
+        return generate(userId, username, userType, expireMinute, true);
+    }
+
     public Claims parseToken(String token) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(appConfigSecurityJwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
@@ -94,19 +77,16 @@ public class JwtUtil {
             return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
         } catch (Exception e) {
             log.error("解析JWT token失败: {}", e.getMessage(), e);
-            throw new RuntimeException("Token解析失败", e);
+            return null;
         }
     }
 
-    /**
-     * 验证token是否过期
-     *
-     * @param token JWT token
-     * @return 是否过期
-     */
     public boolean isTokenExpired(String token) {
         try {
             Claims claims = parseToken(token);
+            if (claims == null) {
+                return true;
+            }
             Date expiration = claims.getExpiration();
             return expiration.before(new Date());
         } catch (Exception e) {
@@ -115,36 +95,66 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * 刷新token
-     *
-     * @param refreshToken 刷新token
-     * @return 新的访问token
-     */
-    public String refreshToken(String refreshToken) {
-        if (isTokenExpired(refreshToken)) {
-            throw new RuntimeException("刷新token已过期");
+    public boolean isRefreshToken(String token) {
+        if (isTokenExpired(token)) {
+            return false;
         }
-
-        Claims claims = parseToken(refreshToken);
-        Map<String, String> newClaims = new HashMap<>();
-        newClaims.put(UserContextHolder.USER_ID, claims.get(UserContextHolder.USER_ID, String.class));
-        newClaims.put(UserContextHolder.USERNAME, claims.get(UserContextHolder.USERNAME, String.class));
-        newClaims.put(UserContextHolder.USER_TYPE, claims.get(UserContextHolder.USER_TYPE, String.class));
-
-        return generateToken(newClaims);
+        return getBoolean(token, UserContextHolder.IS_REFRESH_TOKEN, false);
     }
 
-    /**
-     * 从token中提取指定key的值
-     *
-     * @param token JWT token
-     * @param key   键名
-     * @return 值
-     */
-    public String get(String token, String key) {
+    public Object get(String token, String key) {
         Claims claims = parseToken(token);
-        return claims.get(key, String.class);
+        if (claims == null) {
+            return null;
+        }
+        return claims.get(key);
     }
 
+    public String getString(String token, String key, String defaultValue) {
+        Object o = get(token, key);
+        return o == null ? defaultValue : o.toString();
+    }
+
+    public Boolean getBoolean(String token, String key, Boolean defaultValue) {
+        Object o = get(token, key);
+        try {
+            return o == null ? defaultValue : Boolean.valueOf(o.toString());
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public Long getLong(String token, String key, Long defaultValue) {
+        Object o = get(token, key);
+        try {
+            return o == null ? defaultValue : Long.valueOf(o.toString());
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public Integer getInteger(String token, String key, Integer defaultValue) {
+        Object o = get(token, key);
+        try {
+            return o == null ? defaultValue : Integer.valueOf(o.toString());
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public UserVO refreshToken(String refreshToken) {
+        if (!isRefreshToken(refreshToken)) {
+            ApiException.error(ResponseMessageEnum.REFRESH_TOKEN_ERROR);
+        }
+        if (isTokenExpired(refreshToken)) {
+            ApiException.error(ResponseMessageEnum.REFRESH_TOKEN_ERROR);
+        }
+        Long userId = getLong(refreshToken, UserContextHolder.USER_ID, null);
+        String username = getString(refreshToken, UserContextHolder.USERNAME, null);
+        Integer userType = getInteger(refreshToken, UserContextHolder.USER_TYPE, null);
+        UserVO userVO = new UserVO();
+        userVO.setToken(generateToken(userId, username, userType));
+        userVO.setRefreshToken(generateRefreshToken(userId, username, userType));
+        return userVO;
+    }
 }

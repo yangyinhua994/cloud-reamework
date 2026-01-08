@@ -58,6 +58,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         return userConvert.entityToVo(user);
     }
 
+    @Override
+    public UserVO refreshToken(UserDTO dto) {
+        String refreshToken = dto.getRefreshToken();
+        if (jwtUtil.isTokenExpired(refreshToken)){
+            ApiException.error(ResponseMessageEnum.REFRESH_TOKEN_ERROR);
+        }
+        return jwtUtil.refreshToken(refreshToken);
+    }
+
     public List<User> getByUserName(String username) {
         LambdaQueryWrapper<User> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(User.class)
                 .eq(User::getUsername, username);
