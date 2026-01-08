@@ -8,7 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class User extends BaseEntity {
+
     private String username;
     private String password;
     private Integer userType;
+
+    public boolean isAdmin() {
+        return userType == 1;
+    }
+
 }

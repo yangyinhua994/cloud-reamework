@@ -37,9 +37,23 @@ public class JwtUtil {
         }
     }
 
-    public String get(String token, String key, String defaultValue) {
+    public Object get(String token, String key) {
         Claims claims = parseToken(token);
-        Object o = claims.get(key);
+        return claims.get(key);
+    }
+
+    public Integer getInteger(String token, String key, Integer defaultValue) {
+        Object o = get(token, key);
+        try {
+            return o == null ? defaultValue : Integer.parseInt(o.toString());
+        } catch (Exception e) {
+            return defaultValue;
+        }
+
+    }
+
+    public String getString(String token, String key, String defaultValue) {
+        Object o = get(token, key);
         return o == null ? defaultValue : o.toString();
     }
 
@@ -87,7 +101,7 @@ public class JwtUtil {
      */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = parseToken(token);
-        if (claims == null){
+        if (claims == null) {
             return null;
         }
         return claimsResolver.apply(claims);

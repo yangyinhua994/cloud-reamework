@@ -1,5 +1,6 @@
 package com.example.holder;
 
+import com.example.entity.User;
 import com.example.utils.StringUtils;
 
 import java.util.HashMap;
@@ -7,74 +8,19 @@ import java.util.Map;
 import java.util.Objects;
 
 public class UserContextHolder {
-
     public static final String USER_ID = "userId";
     public static final String USERNAME = "username";
     public static final String SERVER_NAME = "serverName";
     public static final String USER_TYPE = "userType";
 
-    private static final ThreadLocal<Map<String, Object>> USER_CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<User> USER_CONTEXT = new ThreadLocal<>();
 
-    private static void set(String key, Object value) {
-        Map<String, Object> map = USER_CONTEXT.get();
-        if (map == null) {
-            map = new HashMap<>();
-            USER_CONTEXT.set(map);
-        }
-        map.put(key, value);
+    public static void setUser(User user) {
+        USER_CONTEXT.set(user);
     }
 
-    private static String get(String key) {
-        Map<String, Object> map = USER_CONTEXT.get();
-        if (map == null) {
-            return "";
-        }
-        Object o = map.get(key);
-        return o == null ? null : o.toString();
-    }
-
-    public static void setUserId(String userId) {
-        set(USER_ID, userId);
-    }
-
-    public static void setUsername(String username) {
-        set(USERNAME, username);
-    }
-
-    public static void setServerName(String serverName) {
-        set(SERVER_NAME, serverName);
-    }
-
-    public static String getUserId() {
-        return get(USER_ID);
-    }
-
-    public static String getUsername() {
-        return get(USERNAME);
-    }
-
-    public static String getServerName() {
-        return get(SERVER_NAME);
-    }
-
-    public static void setUserType(Integer userType) {
-        set(USER_TYPE, userType);
-    }
-
-    public static Integer getUserType() {
-        String userType = get(USER_TYPE);
-        if (StringUtils.isBlank(userType)) {
-            return null;
-        }
-        try {
-            return Integer.parseInt(userType);
-        } catch (Exception e) {
-            throw new RuntimeException("userType is not number");
-        }
-    }
-
-    public static boolean isAdmin() {
-        return Objects.equals(1, getUserType());
+    public static User getUser() {
+        return USER_CONTEXT.get();
     }
 
     public static void clear() {

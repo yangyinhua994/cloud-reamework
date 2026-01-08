@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ResponseMessageEnum {
     COMMUNITY_NAME_EXIST("小区名称已存在"),
-    USER_NAME_EXIST("用户名已存在"),
+    USER_EXIST("用户已存在"),
     ID_NOT_NULL("ID不能为空"),
     USER_NOT_EXIST("用户不存在"),
     ACCOUNT_ERROR("账号异常"),
@@ -16,6 +16,7 @@ public enum ResponseMessageEnum {
     ID_NOT_EXIST("ID有误"),
     PHONE_NOT_EXIST("电话不能为空"),
     SERVICE_NOT_AVAILABLE("服务不可用"),
+    NO_AUTHORITY("无权访问该接口"),
     ;
 
     private final String message;
@@ -24,4 +25,4 @@ public enum ResponseMessageEnum {
         this.message = message;
     }
 
-    }
+}

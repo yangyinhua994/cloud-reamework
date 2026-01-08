@@ -46,9 +46,6 @@ public class JwtUtil {
 
     /**
      * 生成刷新token（较长有效期）
-     *
-     * @param claims 自定义claims
-     * @return 刷新token
      */
     public String generateRefreshToken(Map<String, String> claims) {
         try {
@@ -70,19 +67,18 @@ public class JwtUtil {
         Map<String, String> claims = new HashMap<>();
         claims.put(UserContextHolder.USER_ID, user.getId().toString());
         claims.put(UserContextHolder.USERNAME, user.getUsername());
+        claims.put(UserContextHolder.USER_TYPE, user.getUserType().toString());
         return generateToken(claims);
     }
 
     /**
-     * 生成用户刷新token
-     *
-     * @param user 用户信息
-     * @return 刷新token
+     * 生成用户刷新 token
      */
     public String generateRefreshToken(User user) {
         Map<String, String> claims = new HashMap<>();
         claims.put(UserContextHolder.USER_ID, user.getId().toString());
         claims.put(UserContextHolder.USERNAME, user.getUsername());
+        claims.put(UserContextHolder.USER_TYPE, user.getUserType().toString());
         return generateRefreshToken(claims);
     }
 
@@ -90,7 +86,6 @@ public class JwtUtil {
      * 解析JWT token并提取claims
      *
      * @param token JWT token
-     * @return Claims对象
      */
     public Claims parseToken(String token) {
         try {
@@ -135,6 +130,7 @@ public class JwtUtil {
         Map<String, String> newClaims = new HashMap<>();
         newClaims.put(UserContextHolder.USER_ID, claims.get(UserContextHolder.USER_ID, String.class));
         newClaims.put(UserContextHolder.USERNAME, claims.get(UserContextHolder.USERNAME, String.class));
+        newClaims.put(UserContextHolder.USER_TYPE, claims.get(UserContextHolder.USER_TYPE, String.class));
 
         return generateToken(newClaims);
     }

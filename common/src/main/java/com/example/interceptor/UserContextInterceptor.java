@@ -1,5 +1,6 @@
 package com.example.interceptor;
 
+import com.example.entity.User;
 import com.example.holder.UserContextHolder;
 import com.example.properties.AppProperties;
 import com.example.properties.SpringProperties;
@@ -40,6 +41,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
         // 从请求头提取网关透传的用户信息
         String userId = request.getHeader(UserContextHolder.USER_ID);
         String username = request.getHeader(UserContextHolder.USERNAME);
+        String userType = request.getHeader(UserContextHolder.USER_TYPE);
         if (StringUtils.isBlank(userId) && !shouldSkip(request.getRequestURI())) {
             buildUnauthorizedResponse(response);
             return false;
@@ -53,10 +55,16 @@ public class UserContextInterceptor implements HandlerInterceptor {
                 return false;
             }
         }
+        try {
+            User user = new User();
+            user.setId(Long.parseLong(userId));
+            user.setUsername(username);
+            user.setUserType(Integer.parseInt(userType));
+            UserContextHolder.setUser(user);
+        } catch (Exception e) {
+            log.error("解析用户信息失败, userId: {}, username: {}, userType: {}", userId, username, userType);
+        }
 
-        UserContextHolder.setServerName(springProperties.getApplication().getName());
-        UserContextHolder.setUserId(userId);
-        UserContextHolder.setUsername(username);
         return true;
     }
 

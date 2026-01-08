@@ -58,8 +58,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     /**
      * 分页获取
      */
-    @GetMapping("/query/page/list")
-    public Response<Page<V>> pageList(D dto) {
+    @GetMapping("/query/page")
+    public Response<Page<V>> page(D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
         prePageList(dto, lambdaQueryWrapper);
         Page<T> page = service.page(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);

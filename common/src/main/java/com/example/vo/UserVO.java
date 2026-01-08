@@ -15,11 +15,6 @@ public class UserVO extends BaseVO {
     private String username;
 
     /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 用户类型 1：管理员
      */
     private Integer userType;

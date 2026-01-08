@@ -21,19 +21,22 @@ public class FeignUserContextInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
 
-        // 透传服务名
+        // feign 调用时透传用户信息
         String serverName = springProperties.getApplication().getName();
         template.header(UserContextHolder.SERVER_NAME, serverName);
+        User user = UserContextHolder.getUser();
 
-        Object userId = UserContextHolder.getUserId();
-        if (userId != null) {
-            template.header(UserContextHolder.USER_ID, userId.toString());
+        if (user.getId() != null) {
+            template.header(UserContextHolder.USER_ID, user.getId().toString());
         }
 
-        Object username = UserContextHolder.getUsername();
-        if (username != null) {
-            String encodedUsername = URLEncoder.encode(username.toString(), StandardCharsets.UTF_8);
+        if (user.getUsername() != null) {
+            String encodedUsername = URLEncoder.encode(user.getUsername(), StandardCharsets.UTF_8);
             template.header("username", encodedUsername);
+        }
+
+        if (user.getUserType() != null) {
+            template.header(UserContextHolder.USER_TYPE, user.getUserType().toString());
         }
 
     }

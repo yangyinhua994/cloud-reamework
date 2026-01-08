@@ -1,5 +1,7 @@
 package com.example.acpectj;
 
+import com.example.entity.User;
+import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
 import com.example.holder.UserContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,9 @@ public class LoginAdminAspect {
     }
 
     private void validateAdminLogin() {
-        if (!UserContextHolder.isAdmin()){
-            throw new ApiException("无权访问该接口");
+        User user = UserContextHolder.getUser();
+        if (user == null || !user.isAdmin()) {
+            ApiException.error(ResponseMessageEnum.NO_AUTHORITY);
         }
     }
 }
