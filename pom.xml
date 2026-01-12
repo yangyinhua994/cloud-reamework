@@ -29,11 +29,11 @@
     </scm>
 
     <modules>
-        <module>common</module>
-        <module>gateway-service</module>
-        <module>base-service</module>
-        <module>user-service</module>
-        <module>system-service</module>
+        <module>nicenet-common</module>
+        <module>nicenet-gateway</module>
+        <module>nicenet-base</module>
+        <module>nicenet-user</module>
+        <module>nicenet-system</module>
     </modules>
 
     <properties>
