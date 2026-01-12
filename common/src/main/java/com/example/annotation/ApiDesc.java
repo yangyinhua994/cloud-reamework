@@ -2,10 +2,10 @@ package com.example.annotation;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface LoginAdmin {
+public @interface ApiDesc {
 
     String value() default "";
 

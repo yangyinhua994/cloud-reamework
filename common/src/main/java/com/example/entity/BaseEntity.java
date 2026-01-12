@@ -2,12 +2,17 @@ package com.example.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@SuperBuilder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseEntity implements Serializable {
 
     @Serial

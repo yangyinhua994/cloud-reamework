@@ -28,4 +28,12 @@ public class UserContextHolder {
         USER_CONTEXT.remove();
     }
 
+    public static void buildAdminUser() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("admin");
+        user.setUserType(1);
+        setUser(user);
+    }
+
 }

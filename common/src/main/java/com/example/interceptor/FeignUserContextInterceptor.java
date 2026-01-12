@@ -25,7 +25,9 @@ public class FeignUserContextInterceptor implements RequestInterceptor {
         String serverName = springProperties.getApplication().getName();
         template.header(UserContextHolder.SERVER_NAME, serverName);
         User user = UserContextHolder.getUser();
-
+        if (user == null) {
+            return;
+        }
         if (user.getId() != null) {
             template.header(UserContextHolder.USER_ID, user.getId().toString());
         }

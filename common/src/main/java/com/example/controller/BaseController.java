@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.annotation.ApiDesc;
 import com.example.convert.BaseConvert;
 import com.example.dto.BaseDTO;
 import com.example.entity.BaseEntity;
@@ -12,6 +13,7 @@ import com.example.enums.ResponseMessageEnum;
 import com.example.groups.Add;
 import com.example.groups.UpdateById;
 import com.example.response.Response;
+import com.example.utils.CollectionUtils;
 import com.example.vo.BaseVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
 import lombok.AllArgsConstructor;
@@ -30,23 +32,33 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     protected final C convert;
 
     /**
-     * 新增
+     * 新增数据
      */
+    @ApiDesc("新增数据")
     @PostMapping("/add")
     public Response<V> add(@RequestBody @Validated(Add.class) D dto) {
         dto.setId(null);
         T entity = preAdd(dto);
-        if (entity.getId() == null) {
-            entity.setId(IdWorker.getId());
-        }
-        service.saveOrUpdate(entity);
+        adds(List.of(entity));
         postAdd(entity, dto);
         return Response.success(convert.entityToVo(entity));
     }
 
     /**
+     * 新增数据列表
+     */
+    @ApiDesc("新增数据列表")
+    @PostMapping("/add/list")
+    public Response<Void> addList(@RequestBody @Validated(Add.class) List<D> dtoList) {
+        List<T> ts = preAddList(dtoList);
+        adds(ts);
+        return Response.success();
+    }
+
+    /**
      * 根据传入条件获取列表
      */
+    @ApiDesc("获取数据列表")
     @GetMapping("/query/list")
     public Response<List<V>> list(D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(service.getEntityClass());
@@ -58,6 +70,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     /**
      * 分页获取
      */
+    @ApiDesc("分页获取数据")
     @GetMapping("/query/page")
     public Response<Page<V>> page(D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
@@ -69,6 +82,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     /**
      * 获取详情
      */
+    @ApiDesc("获取数据详情")
     @GetMapping("/query/{id}")
     public Response<V> get(@PathVariable Long id) {
         if (id == null) {
@@ -89,6 +103,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     /**
      * 修改
      */
+    @ApiDesc("修改数据")
     @PutMapping("/update")
     public Response<Void> update(@RequestBody @Validated(UpdateById.class) D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(service.getEntityClass());
@@ -105,8 +120,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     }
 
     /**
-     * 物理删除
+     * 逻辑删除
      */
+    @ApiDesc("逻辑删除数据")
     @DeleteMapping("/delete/soft/{id}")
     public Response<Void> deleteSoft(@PathVariable Long id) {
         if (id == null) {
@@ -122,8 +138,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     }
 
     /**
-     * 删除
+     * 物理删除
      */
+    @ApiDesc("物理删除数据")
     @DeleteMapping("/delete/{id}")
     public Response<Void> delete(@PathVariable Long id) {
         if (id == null) {
@@ -135,6 +152,18 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         }
         postDelete(id);
         return Response.success();
+    }
+
+    public void adds(List<T> ts) {
+        if (CollectionUtils.isEmpty(ts)) {
+            return;
+        }
+        for (T t : ts) {
+            if (t.getId() == null) {
+                t.setId(IdWorker.getId());
+            }
+        }
+        service.saveOrUpdateBatch(ts);
     }
 
 
@@ -161,6 +190,11 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     protected T preAdd(D dto) {
         return getConvert().dtoToEntity(dto);
+    }
+
+
+    protected List<T> preAddList(List<D> dtoList) {
+        return this.convert.dtoToEntity(dtoList);
     }
 
     protected T preGet(Long id) {

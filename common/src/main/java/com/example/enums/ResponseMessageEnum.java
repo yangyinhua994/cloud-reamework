@@ -13,6 +13,8 @@ public enum ResponseMessageEnum {
     ACCOUNT_OR_PASSWORD_ERROR("账号或密码错误"),
     PHONE_IS_REGISTERED("电话已注册"),
     DATA_NOT_EXIST("数据不存在"),
+    DATA_EXISTED("数据已存在"),
+    DATA_REPEAT("数据重复"),
     ID_NOT_EXIST("ID有误"),
     PHONE_NOT_EXIST("电话不能为空"),
     SERVICE_NOT_AVAILABLE("服务不可用"),

@@ -5,10 +5,15 @@ import com.example.groups.Delete;
 import com.example.groups.UpdateById;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
+@SuperBuilder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseDTO {
 
     @TableId

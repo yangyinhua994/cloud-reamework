@@ -1,11 +1,12 @@
 package com.example.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
-@Builder
-@ToString
 @EqualsAndHashCode(callSuper = true)
+@Data
+@SuperBuilder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestLog extends BaseEntity {

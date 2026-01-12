@@ -33,6 +33,7 @@
         <module>gateway-service</module>
         <module>base-service</module>
         <module>user-service</module>
+        <module>system-service</module>
     </modules>
 
     <properties>
