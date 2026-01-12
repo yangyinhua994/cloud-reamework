@@ -39,6 +39,9 @@ public class PreAuthorizeAspect {
         if (user == null || user.getId() == null) {
             ApiException.error(ResponseMessageEnum.NO_AUTHORITY);
         }
+        if (user.isAdmin()) {
+            return joinPoint.proceed();
+        }
         Long userId = user.getId();
         String apiUrl = joinPoint.getSignature().toShortString();
         if (StringUtils.isBlank(apiUrl)) {
@@ -48,8 +51,13 @@ public class PreAuthorizeAspect {
                 .userId(userId)
                 .apiUrl(apiUrl)
                 .build();
-        Response<List<UserApiInfoVO>> response = systemClient.list(userApiInfoDTO);
-        if (response.isFail() || CollectionUtils.isEmpty(response.getData())) {
+        try {
+            Response<List<UserApiInfoVO>> response = systemClient.list(userApiInfoDTO);
+            if (response.isFail() || CollectionUtils.isEmpty(response.getData())) {
+                ApiException.error(ResponseMessageEnum.NO_AUTHORITY);
+            }
+        } catch (Exception e) {
+            log.error("权限验证失败", e);
             ApiException.error(ResponseMessageEnum.NO_AUTHORITY);
         }
         return joinPoint.proceed();

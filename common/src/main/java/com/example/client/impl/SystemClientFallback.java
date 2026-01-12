@@ -18,13 +18,13 @@ public class SystemClientFallback implements FallbackFactory<SystemClient> {
         return new SystemClient() {
             @Override
             public Response<Void> addList(List<ApiInfoDTO> dtoList) {
-                log.warn("添加接口信息失败", cause);
+                log.warn("上报接口信息到系统服务失败，请检查系统服务是否运行", cause);
                 return Response.fail();
             }
 
             @Override
             public Response<List<UserApiInfoVO>> list(UserApiInfoDTO dto) {
-                log.warn("添加用户访问地址信息失败", cause);
+                log.warn("获取用户访问地址权限管理失败，请检查系统服务是否运行", cause);
                 return Response.fail();
             }
         };

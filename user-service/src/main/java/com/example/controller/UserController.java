@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.annotation.ApiDesc;
+import com.example.annotation.PreAuthorize;
 import com.example.convert.UserConvert;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
@@ -51,6 +52,25 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
     @PostMapping("/refreshToken")
     public Response<UserVO> refreshToken(@RequestBody @Validated(RefreshToken.class) UserDTO dto) {
         return Response.success(service.refreshToken(dto));
+    }
+
+    /**
+     * 鉴权测试
+     */
+    @GetMapping("/authorize/yes")
+    @ApiDesc("鉴权测试")
+    @PreAuthorize
+    public Response<String> authorizeYes() {
+        return Response.success("访问成功");
+    }
+
+    /**
+     * 不鉴权测试
+     */
+    @GetMapping("/authorize/no")
+    @ApiDesc("不鉴权测试")
+    public Response<String> authorizeNo() {
+        return Response.success("访问成功");
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -22,6 +23,6 @@ public interface SystemClientOther extends SystemClient {
 
     @Override
     @GetMapping("/system/user/api/info/query/list")
-    Response<List<UserApiInfoVO>> list(UserApiInfoDTO dto);
+    Response<List<UserApiInfoVO>> list(@RequestParam("dto") UserApiInfoDTO dto);
 
 }

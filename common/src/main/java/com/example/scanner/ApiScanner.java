@@ -71,8 +71,7 @@ public class ApiScanner {
         }
         try {
             systemClient.addList(apiInfos);
-        } catch (Exception e) {
-            log.warn("添加接口信息失败", e);
+        } catch (Exception ignored) {
         }
     }
 
