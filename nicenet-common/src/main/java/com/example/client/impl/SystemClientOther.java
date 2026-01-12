@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "system-service", fallback = SystemClientFallback.class)
+@FeignClient(name = "nicenet-system", fallback = SystemClientFallback.class)
 @ConditionalOnProperty(name = "app.service.system", havingValue = "false", matchIfMissing = true)
 public interface SystemClientOther extends SystemClient {
 

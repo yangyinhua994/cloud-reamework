@@ -28,7 +28,6 @@ public class ApiScanner {
 
     @PostConstruct
     public void scanAllApi() {
-        UserContextHolder.buildAdminUser();
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
         List<ApiInfoDTO> apiInfos = new ArrayList<>();
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
@@ -70,8 +69,10 @@ public class ApiScanner {
             return;
         }
         try {
+            UserContextHolder.buildAdminUser();
             systemClient.addList(apiInfos);
         } catch (Exception ignored) {
+            log.warn("上报接口信息到系统服务失败，请检查系统服务是否运行");
         }
     }
 
