@@ -18,7 +18,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ApiInfoServiceImpl extends BaseServiceImpl<ApiInfoMapper, ApiInfo> implements ApiInfoService {
 
-    public final ApiInfoConvert apiInfoConvert;
+    private final ApiInfoConvert apiInfoConvert;
 
     @Override
     public List<ApiInfo> preAddList(List<ApiInfoDTO> dtoList) {

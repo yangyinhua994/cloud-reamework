@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.convert.UserApiInfoConvert;
@@ -7,20 +7,19 @@ import com.example.entity.UserApiInfo;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
 import com.example.mapper.UserApiInfoMapper;
-import com.example.service.impl.BaseServiceImpl;
+import com.example.service.UserApiInfoService;
 import com.example.utils.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class UserApiInfoServiceImpl extends BaseServiceImpl<UserApiInfoMapper, UserApiInfo> implements UserApiInfoService {
 
-    public final UserApiInfoConvert userApiInfoConvert;
+    private final UserApiInfoConvert userApiInfoConvert;
 
     @Override
     public List<UserApiInfo> preAddList(List<UserApiInfoDTO> dtoList) {
