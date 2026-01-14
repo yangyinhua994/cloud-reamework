@@ -21,6 +21,9 @@ public enum ResponseMessageEnum {
     NO_AUTHORITY("无权访问该接口"),
     REFRESH_TOKEN_ERROR("刷新token无效或已过期"),
     EMPTY_PARAMETER("存在空参数"),
+    DEVICE_NOT_EXIST("设备不存在"),
+    CONTENT_NOT_EXIST("部件不存在"),
+    SENSOR_NOT_EXIST("传感器不存在"),
     ;
 
     private final String message;

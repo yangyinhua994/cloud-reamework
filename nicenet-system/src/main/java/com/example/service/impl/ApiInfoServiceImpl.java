@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.convert.ApiInfoConvert;
 import com.example.dto.ApiInfoDTO;
 import com.example.entity.ApiInfo;
@@ -38,4 +39,10 @@ public class ApiInfoServiceImpl extends BaseServiceImpl<ApiInfoMapper, ApiInfo> 
         });
         return apiInfoConvert.dtoToEntity(dtoList);
     }
+
+    @Override
+    public List<ApiInfo> queryTreeByIds(Long Ids) {
+        return List.of();
+    }
+
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ComponentMapper">
+
+    <resultMap id="ComponentVO" type="com.example.vo.ComponentVO">
+        <result property="id" column="component_id"/>
+        <result property="componentNumber" column="component_number"/>
+        <result property="componentName" column="component_name"/>
+        <result property="remark" column="component_remark"/>
+
+        <association property="deviceVO" javaType="com.example.vo.DeviceVO">
+            <result property="deviceNumber" column="device_number"/>
+            <result property="deviceName" column="device_name"/>
+            <result property="remark" column="device_remark"/>
+        </association>
+        <association property="sensorVO" javaType="com.example.vo.SensorVO">
+            <result property="id" column="sensor_id"/>
+            <result property="sensorNumber" column="sensor_number"/>
+            <result property="sensorName" column="sensor_name"/>
+            <result property="symbol" column="symbol"/>
+            <result property="paramName" column="param_name"/>
+            <result property="optimalValue" column="optimal_value"/>
+            <result property="miniValue" column="mini_value"/>
+            <result property="maxValue" column="max_value"/>
+            <result property="unit" column="unit"/>
+            <result property="currentValue" column="current_value"/>
+        </association>
+    </resultMap>
+
+    <sql id="QueryDeviceSelect">
+        SELECT c.id     AS component_id,
+               c.component_number,
+               c.component_name,
+               c.remark AS component_remark,
+               d.id     AS device_id,
+               d.device_number,
+               d.device_name,
+               d.remark    device_remark,
+               s.id     AS sensor_id,
+               s.sensor_number,
+               s.sensor_name,
+               s.symbol,
+               s.param_name,
+               s.optimal_value,
+               s.mini_value,
+               s.max_value,
+               s.unit,
+               s.current_value
+        FROM t_component AS c
+                 LEFT JOIN t_device_component_sensor AS dcs ON dcs.component_id = c.id
+                 LEFT JOIN t_device AS d ON d.id = dcs.device_id
+                 LEFT JOIN t_sensor AS s ON s.id = dcs.sensor_id
+    </sql>
+
+    <sql id="QueryDeviceWhere">
+        <where>
+            <if test="dto != null">
+                <if test="dto.componentNumber != null">
+                    AND d.component_number LIKE CONCAT('%', #{componentNumber}, '%')
+                </if>
+                <if test="dto.componentNumber != null">
+                    AND d.component_name LIKE CONCAT('%', #{componentNumber}, '%')
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <select id="list" resultMap="ComponentVO">
+        <include refid="QueryDeviceSelect"/>
+        <include refid="QueryDeviceWhere"/>
+    </select>
+
+    <select id="page" resultMap="ComponentVO">
+        <include refid="QueryDeviceSelect"/>
+        <include refid="QueryDeviceWhere"/>
+    </select>
+
+</mapper>

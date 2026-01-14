@@ -13,5 +13,4 @@ public interface UserApiInfoService extends BaseService<UserApiInfo> {
 
     Boolean isExist(List<String> apiUrls);
 
-
 }

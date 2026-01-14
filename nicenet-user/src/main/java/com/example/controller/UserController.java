@@ -54,23 +54,4 @@ public class UserController extends BaseController<User, UserDTO, UserVO, UserSe
         return Response.success(service.refreshToken(dto));
     }
 
-    /**
-     * 鉴权测试
-     */
-    @GetMapping("/authorize/yes")
-    @ApiDesc("鉴权测试")
-    @PreAuthorize
-    public Response<String> authorizeYes() {
-        return Response.success("访问成功");
-    }
-
-    /**
-     * 不鉴权测试
-     */
-    @GetMapping("/authorize/no")
-    @ApiDesc("不鉴权测试")
-    public Response<String> authorizeNo() {
-        return Response.success("访问成功");
-    }
-
 }

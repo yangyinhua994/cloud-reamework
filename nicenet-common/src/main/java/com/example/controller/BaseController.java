@@ -18,6 +18,7 @@ import com.example.vo.BaseVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,12 +37,10 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @ApiDesc("新增数据")
     @PostMapping("/add")
+    @Transactional(rollbackFor = Exception.class)
     public Response<V> add(@RequestBody @Validated(Add.class) D dto) {
-        dto.setId(null);
-        T entity = preAdd(dto);
-        adds(List.of(entity));
-        postAdd(entity, dto);
-        return Response.success(convert.entityToVo(entity));
+        addList(List.of(dto));
+        return Response.success();
     }
 
     /**
@@ -49,9 +48,12 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @ApiDesc("新增数据列表")
     @PostMapping("/add/list")
+    @Transactional(rollbackFor = Exception.class)
     public Response<Void> addList(@RequestBody @Validated(Add.class) List<D> dtoList) {
         List<T> ts = preAddList(dtoList);
         adds(ts);
+        postAddList(ts);
+        postAddList(dtoList, ts);
         return Response.success();
     }
 
@@ -64,7 +66,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         LambdaQueryWrapper<T> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(service.getEntityClass());
         lambdaQueryWrapper.eq(T::getId, dto.getId());
         preList(dto, lambdaQueryWrapper);
-        return Response.success(convert.entityToVo(service.list(lambdaQueryWrapper)));
+        List<T> ts = service.list(lambdaQueryWrapper);
+        List<V> vs = postList(ts);
+        return Response.success(vs);
     }
 
     /**
@@ -76,7 +80,11 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
         prePageList(dto, lambdaQueryWrapper);
         Page<T> page = service.page(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);
-        return Response.success(convert.entityToVo(page));
+        Page<V> vPage = convert.entityToVo(page);
+        List<T> records = page.getRecords();
+        List<V> vs = postList(records);
+        vPage.setRecords(vs);
+        return Response.success();
     }
 
     /**
@@ -105,6 +113,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @ApiDesc("修改数据")
     @PutMapping("/update")
+    @Transactional(rollbackFor = Exception.class)
     public Response<Void> update(@RequestBody @Validated(UpdateById.class) D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(service.getEntityClass());
         lambdaQueryWrapper.eq(T::getId, dto.getId());
@@ -124,6 +133,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @ApiDesc("逻辑删除数据")
     @DeleteMapping("/delete/soft/{id}")
+    @Transactional(rollbackFor = Exception.class)
     public Response<Void> deleteSoft(@PathVariable Long id) {
         if (id == null) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
@@ -142,6 +152,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      */
     @ApiDesc("物理删除数据")
     @DeleteMapping("/delete/{id}")
+    @Transactional(rollbackFor = Exception.class)
     public Response<Void> delete(@PathVariable Long id) {
         if (id == null) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
@@ -189,7 +200,24 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
      * 新增前处理（子类可重写）
      */
     protected T preAdd(D dto) {
-        return getConvert().dtoToEntity(dto);
+        if (dto == null) {
+            return null;
+        }
+        List<T> ts = preAddList(List.of(dto));
+        if (CollectionUtils.isEmpty(ts)) {
+            return null;
+        }
+        return ts.get(0);
+    }
+
+    protected List<V> postList(List<T> ts) {
+        return convert.entityToVo(ts);
+    }
+
+    protected void postAddList(List<T> ts) {
+    }
+
+    protected void postAddList(List<D> dtoList, List<T> ts) {
     }
 
 
@@ -208,13 +236,6 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     }
 
     protected void postGet(T entity) {
-    }
-
-    /**
-     * 新增后处理（子类可重写）
-     */
-    protected void postAdd(T entity, D dto) {
-        // 子类可重写实现业务逻辑
     }
 
     /**

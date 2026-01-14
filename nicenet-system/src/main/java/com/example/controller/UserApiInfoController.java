@@ -6,8 +6,11 @@ import com.example.dto.UserApiInfoDTO;
 import com.example.entity.UserApiInfo;
 import com.example.service.UserApiInfoService;
 import com.example.vo.UserApiInfoVO;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 用户接口访问控制接口
@@ -19,5 +22,13 @@ public class UserApiInfoController extends BaseController<UserApiInfo, UserApiIn
 
     public UserApiInfoController(UserApiInfoService service, UserApiInfoConvert convert) {
         super(service, convert);
+    }
+
+    /**
+     * 获取当前用户可访问的接口
+     */
+    @GetMapping("/getUserApiInfo")
+    public List<UserApiInfoVO> getUserApiInfo() {
+        return List.of();
     }
 }

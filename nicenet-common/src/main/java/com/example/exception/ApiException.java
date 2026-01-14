@@ -15,7 +15,11 @@ public class ApiException extends RuntimeException {
         if (responseMessageEnum == null) {
             throw new ApiException();
         }
-        throw new ApiException(responseMessageEnum.getMessage());
+        error(responseMessageEnum.getMessage());
+    }
+
+    public static void error(String msg) {
+        throw new ApiException(msg);
     }
 
 }

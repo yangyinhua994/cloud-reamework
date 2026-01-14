@@ -8,4 +8,29 @@ public class CollectionUtils extends org.springframework.util.CollectionUtils {
         return !isEmpty(collection);
     }
 
+    public static boolean isAllEmpty(Collection<?>... collections) {
+        if (collections == null) {
+            return true;
+        }
+        for (Collection<?> collection : collections) {
+            if (!isEmpty(collection)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isExitsEmpty(Collection<?>... collections) {
+        if (collections == null) {
+            return true;
+        }
+        for (Collection<?> collection : collections) {
+            if (isEmpty(collection)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }

@@ -26,7 +26,7 @@ public class BaseDTO {
     private Integer deleted;
     private Integer version;
 
-    private Integer pageNum = 1;
-    private Integer pageSize = 10;
+    private long pageNum = 1;
+    private long pageSize = 10;
 
 }

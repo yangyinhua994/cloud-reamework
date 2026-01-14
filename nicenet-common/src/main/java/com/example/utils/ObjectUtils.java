@@ -15,4 +15,16 @@ public class ObjectUtils extends org.springframework.util.ObjectUtils {
         return false;
     }
 
+    public static boolean isAllEmpty(Object... objs) {
+        if (objs == null) {
+            return true;
+        }
+        for (Object obj : objs) {
+            if (isNotEmpty(obj)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

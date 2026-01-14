@@ -34,7 +34,7 @@ public class UserDTO extends BaseDTO {
     /**
      * 用户类型 1：管理员
      */
-    @NotNull(message = "密码不能为空", groups = {Add.class, Register.class})
+    @NotNull(message = "用户类型不能为空", groups = {Add.class, Register.class})
     private Integer userType;
 
     /**
