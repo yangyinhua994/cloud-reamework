@@ -12,6 +12,10 @@ public interface ComponentService extends BaseService<Component> {
 
     void checkIds(List<Long> ids);
 
+    void checkComponentIds(List<ComponentDTO> dtoList);
+
+    void checkComponentNumber(List<ComponentDTO> dtoList);
+
     List<Component> getByComponentNumbers(List<String> componentNumbers);
 
     List<Component> preAddList(List<ComponentDTO> dtoList);

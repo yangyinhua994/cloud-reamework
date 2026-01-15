@@ -12,9 +12,9 @@ public interface SensorService extends BaseService<Sensor> {
 
     void checkIds(List<Long> ids);
 
-    List<Sensor> preAddList(List<SensorDTO> dtoList);
+    void checkSensorIds(List<SensorDTO> dtoList);
 
-    void postAddList( List<Sensor> sensors);
+    List<Sensor> preAddList(List<SensorDTO> dtoList);
 
     List<SensorVO> list(SensorDTO dto);
 

@@ -1,11 +1,9 @@
 package com.example.service.impl;
 
-import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.convert.ComponentConvert;
 import com.example.dto.ComponentDTO;
-import com.example.dto.DeviceDTO;
 import com.example.dto.SensorDTO;
 import com.example.entity.Component;
 import com.example.enums.ResponseMessageEnum;
@@ -13,13 +11,11 @@ import com.example.exception.ApiException;
 import com.example.mapper.ComponentMapper;
 import com.example.service.ComponentService;
 import com.example.service.DeviceComponentSensorService;
-import com.example.service.DeviceService;
 import com.example.service.SensorService;
+import com.example.utils.CollectionUtils;
 import com.example.utils.ObjectUtils;
 import com.example.vo.ComponentVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,12 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Component> implements ComponentService {
 
-    @Lazy
-    @Autowired
-    private  DeviceService deviceService;
-    @Lazy
-    @Autowired
-    private  SensorService sensorService;
+    private final SensorService sensorService;
     private final DeviceComponentSensorService deviceComponentSensorService;
     private final ComponentConvert componentConvert;
     private final ComponentMapper componentMapper;
@@ -59,6 +50,28 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     }
 
     @Override
+    public void checkComponentIds(List<ComponentDTO> dtoList) {
+        if (CollectionUtils.isEmpty(dtoList)) {
+            return;
+        }
+        checkIds(dtoList.stream().map(ComponentDTO::getId).filter(ObjectUtils::isNotEmpty).toList());
+
+    }
+
+    @Override
+    public void checkComponentNumber(List<ComponentDTO> dtoList) {
+        if (CollectionUtils.isEmpty(dtoList)) {
+            return;
+        }
+        List<String> componentNumbers = dtoList.stream().map(ComponentDTO::getComponentNumber).filter(ObjectUtils::isNotEmpty).toList();
+        List<Component> components = getByComponentNumbers(componentNumbers);
+        if (CollectionUtils.isNotEmpty(components)) {
+            String componentNumber = components.get(0).getComponentNumber();
+            ApiException.error("部件编号重复: " + componentNumber);
+        }
+    }
+
+    @Override
     public List<Component> getByComponentNumbers(List<String> componentNumbers) {
         if (CollectionUtils.isEmpty(componentNumbers)) {
             return List.of();
@@ -73,22 +86,14 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         if (CollectionUtils.isEmpty(dtoList)) {
             return List.of();
         }
-        List<String> componentNumbers = dtoList.stream().map(ComponentDTO::getComponentNumber).filter(ObjectUtils::isNotEmpty).toList();
-        List<Component> components = getByComponentNumbers(componentNumbers);
-        if (CollectionUtils.isNotEmpty(components)) {
-            String componentNumber = components.get(0).getComponentNumber();
-            ApiException.error("部件编号重复: " + componentNumber);
+
+        checkComponentNumber(dtoList);
+        checkComponentIds(dtoList);
+
+        for (ComponentDTO componentDTO : dtoList) {
+            sensorService.checkSensorIds(componentDTO.getSensorDTOList());
         }
 
-        List<DeviceDTO> deviceDTOS = dtoList.stream().map(ComponentDTO::getDeviceDTO).filter(ObjectUtils::isNotEmpty).toList();
-        if (CollectionUtils.isNotEmpty(deviceDTOS)){
-            deviceService.checkIds(deviceDTOS.stream().map(DeviceDTO::getId).filter(ObjectUtils::isNotEmpty).toList());
-        }
-
-        List<SensorDTO> sensorDTOS = dtoList.stream().map(ComponentDTO::getSensorDTO).filter(ObjectUtils::isNotEmpty).toList();
-        if (CollectionUtils.isNotEmpty(sensorDTOS)){
-            sensorService.checkIds(sensorDTOS.stream().map(SensorDTO::getId).filter(ObjectUtils::isNotEmpty).toList());
-        }
         return componentConvert.dtoToEntity(dtoList);
     }
 

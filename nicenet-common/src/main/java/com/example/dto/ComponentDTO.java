@@ -34,17 +34,8 @@ public class ComponentDTO extends BaseDTO {
     private String remark;
 
     /**
-     * 设备信息
-     */
-    private DeviceDTO deviceDTO;
-
-    /**
      * 传感器信息
      */
-    private SensorDTO sensorDTO;
-
-    public boolean equalsComponentNumber(String componentNumber) {
-        return this.componentNumber.equals(componentNumber);
-    }
+    private List<SensorDTO> sensorDTOList;
 
 }

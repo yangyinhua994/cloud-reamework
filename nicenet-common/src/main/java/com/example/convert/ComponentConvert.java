@@ -13,7 +13,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ComponentConvert extends BaseConvert<Component, ComponentDTO, ComponentVO> {
     @Override
-    @Mapping(source = "deviceDTO", target = "device")
-    @Mapping(source = "sensorDTO", target = "sensor")
+    @Mapping(source = "sensorDTOList", target = "sensorList")
     Component dtoToEntity(ComponentDTO dto);
 }

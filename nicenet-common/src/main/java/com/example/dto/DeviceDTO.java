@@ -30,22 +30,13 @@ public class DeviceDTO extends BaseDTO {
     private String deviceName;
 
     /**
-     * 部件信息
-     */
-    private ComponentDTO componentDTO;
-
-    /**
-     * 传感器信息
-     */
-    private SensorDTO sensorDTO;
-
-    /**
      * 说明
      */
     private String remark;
 
-    public boolean equalsDeviceNumber(String deviceNumber) {
-        return Objects.equals(this.deviceNumber, deviceNumber);
-    }
+    /**
+     * 部件信息
+     */
+    private List<ComponentDTO> componentDTOList;
 
 }

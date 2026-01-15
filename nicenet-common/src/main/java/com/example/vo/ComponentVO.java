@@ -3,6 +3,8 @@ package com.example.vo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @SuperBuilder
 @ToString
@@ -27,12 +29,8 @@ public class ComponentVO extends BaseVO {
     private String remark;
 
     /**
-     * 设备信息
-     */
-    private DeviceVO deviceVO;
-
-    /**
      * 传感器信息
      */
-    private SensorVO sensorVO;
+    private List<SensorVO> sensorVOList;
+
 }

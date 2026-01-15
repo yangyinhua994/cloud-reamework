@@ -62,14 +62,4 @@ public class SensorVO extends BaseVO {
      */
     private String remark;
 
-    /**
-     * 设备信息
-     */
-    private DeviceVO deviceVO;
-
-    /**
-     * 部件信息
-     */
-    private ComponentVO componentVO;
-
 }

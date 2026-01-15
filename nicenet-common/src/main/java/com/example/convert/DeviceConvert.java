@@ -11,7 +11,6 @@ import org.mapstruct.MappingConstants;
 public interface DeviceConvert extends BaseConvert<Device, DeviceDTO, DeviceVO> {
 
     @Override
-    @Mapping(source = "componentDTO", target = "component")
-    @Mapping(source = "sensorDTO", target = "sensor")
+    @Mapping(source = "componentDTOList", target = "componentList")
     Device dtoToEntity(DeviceDTO dto);
 }

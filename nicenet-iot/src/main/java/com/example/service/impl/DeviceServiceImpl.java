@@ -32,12 +32,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> implements DeviceService {
 
-    @Lazy
-    @Autowired
-    private ComponentService componentService;
-    @Lazy
-    @Autowired
-    private SensorService sensorService;
+    private final ComponentService componentService;
+    private final SensorService sensorService;
     private final DeviceConvert deviceConvert;
     private final DeviceMapper deviceMapper;
     private final DeviceComponentSensorService deviceComponentSensorService;
@@ -62,16 +58,11 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> imp
             ApiException.error("设备编号重复: " + deviceNumber);
         }
 
-        List<ComponentDTO> componentDTOS = dtoList.stream().map(DeviceDTO::getComponentDTO).filter(ObjectUtils::isNotEmpty).toList();
-        if (CollectionUtils.isNotEmpty(componentDTOS)) {
-            List<Long> componentIds = componentDTOS.stream().map(ComponentDTO::getId).filter(ObjectUtils::isNotEmpty).toList();
-            componentService.checkIds(componentIds);
+        List<List<ComponentDTO>> componentDTOListS = dtoList.stream().map(DeviceDTO::getComponentDTOList).filter(ObjectUtils::isNotEmpty).toList();
+        if (CollectionUtils.isNotEmpty(componentDTOListS)) {
+            componentDTOListS.forEach(componentService::checkComponentIds);
         }
-        List<SensorDTO> sensorDTOS = dtoList.stream().map(DeviceDTO::getSensorDTO).filter(ObjectUtils::isNotEmpty).toList();
-        if (CollectionUtils.isNotEmpty(sensorDTOS)) {
-            List<Long> sensorIds = sensorDTOS.stream().map(SensorDTO::getId).filter(ObjectUtils::isNotEmpty).toList();
-            sensorService.checkIds(sensorIds);
-        }
+
         return deviceConvert.dtoToEntity(dtoList);
     }
 

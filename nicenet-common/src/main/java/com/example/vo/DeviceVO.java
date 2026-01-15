@@ -30,11 +30,6 @@ public class DeviceVO extends BaseVO {
     /**
      * 部件信息
      */
-    private ComponentVO componentVO;
-
-    /**
-     * 传感器信息
-     */
-    private SensorVO sensorVO;
+    private List<ComponentVO> componentVOList;
 
 }

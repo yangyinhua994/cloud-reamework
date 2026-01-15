@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @SuperBuilder
 @ToString
@@ -17,7 +19,5 @@ public class Device extends BaseEntity {
     private String remark;
 
     @TableField(exist = false)
-    private Component component;
-    @TableField(exist = false)
-    private Sensor sensor;
+    private List<Component> componentList;
 }

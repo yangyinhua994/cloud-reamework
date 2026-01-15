@@ -25,23 +25,10 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
         if (CollectionUtils.isEmpty(entityList)) {
             return;
         }
-        List<DeviceComponentSensor> list = new ArrayList<>();
-        for (Device device : entityList) {
-            Component component = device.getComponent();
-            Sensor sensor = device.getSensor();
-            if (ObjectUtils.isAllEmpty(component, sensor)) {
-                continue;
-            }
 
-            DeviceComponentSensor deviceComponentSensor = new DeviceComponentSensor();
-            deviceComponentSensor.setDeviceId(device.getId());
-            if (ObjectUtils.isNotEmpty(component)) {
-                deviceComponentSensor.setComponentId(component.getId());
-            }
-            if (ObjectUtils.isNotEmpty(sensor)) {
-                deviceComponentSensor.setSensorId(sensor.getId());
-            }
-            list.add(deviceComponentSensor);
+        List<DeviceComponentSensor> list = buildByDevices(entityList);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
         }
         saveBatch(list);
     }
@@ -52,49 +39,89 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
         if (CollectionUtils.isEmpty(entityList)) {
             return;
         }
-        List<DeviceComponentSensor> list = new ArrayList<>();
-        for (Component component : entityList) {
-            Device device = component.getDevice();
-            Sensor sensor = component.getSensor();
-            if (ObjectUtils.isAllEmpty(device, sensor)) {
-                continue;
-            }
-            DeviceComponentSensor deviceComponentSensor = new DeviceComponentSensor();
-            deviceComponentSensor.setComponentId(component.getId());
-            if (ObjectUtils.isNotEmpty(device)) {
-                deviceComponentSensor.setDeviceId(device.getId());
-            }
-            if (ObjectUtils.isNotEmpty(sensor)) {
-                deviceComponentSensor.setSensorId(sensor.getId());
-            }
-            list.add(deviceComponentSensor);
+
+        List<DeviceComponentSensor> deviceComponentSensors = buildByComponents(entityList);
+        if (CollectionUtils.isEmpty(deviceComponentSensors)) {
+            return;
         }
-        saveBatch(list);
+
+        saveBatch(deviceComponentSensors);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void addBySensor(List<Sensor> entityList) {
+    public List<DeviceComponentSensor> buildByDevices(List<Device> entityList) {
+        List<DeviceComponentSensor> deviceComponentSensors = new ArrayList<>();
         if (CollectionUtils.isEmpty(entityList)) {
-            return;
+            return deviceComponentSensors;
         }
-        List<DeviceComponentSensor> list = new ArrayList<>();
-        for (Sensor sensor : entityList) {
-            Device device = sensor.getDevice();
-            Component component = sensor.getComponent();
-            if (ObjectUtils.isAllEmpty(device, component)) {
+        for (Device device : entityList) {
+            Long deviceId = device.getId();
+            if (ObjectUtils.isEmpty(deviceId)) {
                 continue;
             }
-            DeviceComponentSensor deviceComponentSensor = new DeviceComponentSensor();
-            deviceComponentSensor.setSensorId(sensor.getId());
-            if (ObjectUtils.isNotEmpty(device)) {
-                deviceComponentSensor.setDeviceId(device.getId());
+            List<Component> componentList = device.getComponentList();
+            if (CollectionUtils.isEmpty(componentList)) {
+                continue;
             }
-            if (ObjectUtils.isNotEmpty(component)) {
-                deviceComponentSensor.setComponentId(component.getId());
+
+            List<DeviceComponentSensor> list = buildByComponents(deviceId, componentList);
+            if (CollectionUtils.isEmpty(list)) {
+                continue;
             }
-            list.add(deviceComponentSensor);
+            deviceComponentSensors.addAll(list);
         }
-        saveBatch(list);
+        return deviceComponentSensors;
     }
+
+    @Override
+    public List<DeviceComponentSensor> buildByComponents(List<Component> entityList) {
+        return buildByComponents(null, entityList);
+    }
+
+    @Override
+    public List<DeviceComponentSensor> buildByComponents(Long deviceId, List<Component> entityList) {
+        List<DeviceComponentSensor> deviceComponentSensors = new ArrayList<>();
+        if (CollectionUtils.isEmpty(entityList)) {
+            return deviceComponentSensors;
+        }
+        for (Component component : entityList) {
+            Long componentId = component.getId();
+            if (ObjectUtils.isEmpty(componentId)) {
+                continue;
+            }
+
+            List<DeviceComponentSensor> list = buildBySensor(deviceId, component.getId(), component.getSensorList());
+            if (CollectionUtils.isEmpty(list)) {
+                continue;
+            }
+            deviceComponentSensors.addAll(list);
+        }
+        return deviceComponentSensors;
+    }
+
+    @Override
+    public List<DeviceComponentSensor> buildBySensor(List<Sensor> entityList) {
+        return buildBySensor(null, null, entityList);
+    }
+
+    @Override
+    public List<DeviceComponentSensor> buildBySensor(Long deviceId, Long ComponentId, List<Sensor> entityList) {
+        List<DeviceComponentSensor> deviceComponentSensors = new ArrayList<>();
+        if (CollectionUtils.isEmpty(entityList)) {
+            return deviceComponentSensors;
+        }
+        for (Sensor sensor : entityList) {
+            Long sensorId = sensor.getId();
+            if (ObjectUtils.isEmpty(sensorId)) {
+                continue;
+            }
+            deviceComponentSensors.add(DeviceComponentSensor.builder()
+                    .deviceId(deviceId)
+                    .componentId(ComponentId)
+                    .sensorId(sensorId)
+                    .build());
+        }
+        return deviceComponentSensors;
+    }
+
 }

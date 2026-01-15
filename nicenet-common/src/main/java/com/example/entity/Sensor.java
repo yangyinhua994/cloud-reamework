@@ -63,10 +63,4 @@ public class Sensor extends BaseEntity {
      */
     private String remark;
 
-    @TableField(exist = false)
-    private Device device;
-    @TableField(exist = false)
-    private Component component;
-
-
 }

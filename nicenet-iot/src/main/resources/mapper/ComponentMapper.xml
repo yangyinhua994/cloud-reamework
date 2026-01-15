@@ -7,13 +7,7 @@
         <result property="componentNumber" column="component_number"/>
         <result property="componentName" column="component_name"/>
         <result property="remark" column="component_remark"/>
-
-        <association property="deviceVO" javaType="com.example.vo.DeviceVO">
-            <result property="deviceNumber" column="device_number"/>
-            <result property="deviceName" column="device_name"/>
-            <result property="remark" column="device_remark"/>
-        </association>
-        <association property="sensorVO" javaType="com.example.vo.SensorVO">
+        <collection property="sensorVOList" ofType="com.example.vo.SensorVO">
             <result property="id" column="sensor_id"/>
             <result property="sensorNumber" column="sensor_number"/>
             <result property="sensorName" column="sensor_name"/>
@@ -24,7 +18,7 @@
             <result property="maxValue" column="max_value"/>
             <result property="unit" column="unit"/>
             <result property="currentValue" column="current_value"/>
-        </association>
+        </collection>
     </resultMap>
 
     <sql id="QueryDeviceSelect">

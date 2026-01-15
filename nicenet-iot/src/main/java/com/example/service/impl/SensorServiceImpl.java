@@ -3,23 +3,18 @@ package com.example.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.convert.SensorConvert;
-import com.example.dto.ComponentDTO;
-import com.example.dto.DeviceDTO;
 import com.example.dto.SensorDTO;
 import com.example.entity.Sensor;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
 import com.example.mapper.SensorMapper;
-import com.example.service.ComponentService;
 import com.example.service.DeviceComponentSensorService;
-import com.example.service.DeviceService;
 import com.example.service.SensorService;
 import com.example.utils.CollectionUtils;
 import com.example.utils.ObjectUtils;
 import com.example.vo.SensorVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,12 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> implements SensorService {
 
-    @Lazy
-    @Autowired
-    private DeviceService deviceService;
-    @Lazy
-    @Autowired
-    private ComponentService componentService;
     private final SensorConvert sensorConvert;
     private final DeviceComponentSensorService deviceComponentSensorService;
     private final SensorMapper sensorMapper;
@@ -61,6 +50,14 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
     }
 
     @Override
+    public void checkSensorIds(List<SensorDTO> dtoList) {
+        if (CollectionUtils.isEmpty(dtoList)) {
+            return;
+        }
+        checkIds(dtoList.stream().map(SensorDTO::getId).filter(ObjectUtils::isNotEmpty).toList());
+    }
+
+    @Override
     public List<Sensor> preAddList(List<SensorDTO> dtoList) {
         if (CollectionUtils.isEmpty(dtoList)) {
             return List.of();
@@ -71,22 +68,7 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
             String sensorNumber = sensors.get(0).getSensorNumber();
             ApiException.error("传感器编号重复: " + sensorNumber);
         }
-        List<DeviceDTO> deviceDTOS = dtoList.stream().map(SensorDTO::getDeviceDTO).filter(ObjectUtils::isNotEmpty).toList();
-        if (ObjectUtils.isNotEmpty(deviceDTOS)){
-            deviceService.checkIds(deviceDTOS.stream().map(DeviceDTO::getId).filter(ObjectUtils::isNotEmpty).toList());
-        }
-
-        List<ComponentDTO> componentDTOS = dtoList.stream().map(SensorDTO::getComponentDTO).filter(ObjectUtils::isNotEmpty).toList();
-        if (ObjectUtils.isNotEmpty(componentDTOS)){
-            componentService.checkIds(componentDTOS.stream().map(ComponentDTO::getId).filter(ObjectUtils::isNotEmpty).toList());
-        }
-
         return sensorConvert.dtoToEntity(dtoList);
-    }
-
-    @Override
-    public void postAddList(List<Sensor> sensors) {
-        deviceComponentSensorService.addBySensor(sensors);
     }
 
     @Override

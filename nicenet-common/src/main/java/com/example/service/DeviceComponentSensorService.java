@@ -13,5 +13,13 @@ public interface DeviceComponentSensorService extends BaseService<DeviceComponen
 
     void addByComponent(List<Component> entityList);
 
-    void addBySensor(List<Sensor> entityList);
+    List<DeviceComponentSensor> buildByDevices(List<Device> entityList);
+
+    List<DeviceComponentSensor> buildByComponents(List<Component> entityList);
+
+    List<DeviceComponentSensor> buildByComponents(Long deviceId, List<Component> entityList);
+
+    List<DeviceComponentSensor> buildBySensor(List<Sensor> entityList);
+
+    List<DeviceComponentSensor> buildBySensor(Long deviceId, Long ComponentId, List<Sensor> entityList);
 }

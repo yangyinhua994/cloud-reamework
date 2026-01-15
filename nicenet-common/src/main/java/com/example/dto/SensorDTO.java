@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.example.groups.Add;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -63,7 +64,7 @@ public class SensorDTO extends BaseDTO {
     /**
      * 单位
      */
-    @NotBlank(message = "单位不能为空", groups = {Add.class, Update.class})
+    @Size(max = 5, message = "单位长度不能超过5个字符", groups = {Add.class, Update.class})
     private String unit;
 
     /**
@@ -76,19 +77,5 @@ public class SensorDTO extends BaseDTO {
      * 说明
      */
     private String remark;
-
-    /**
-     * 设备信息
-     */
-    private DeviceDTO deviceDTO;
-
-    /**
-     * 部件信息
-     */
-    private ComponentDTO componentDTO;
-
-    public boolean equalsSensorNumber(String sensorNumber) {
-        return Objects.equals(this.sensorNumber, sensorNumber);
-    }
 
 }

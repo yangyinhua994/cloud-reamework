@@ -13,18 +13,6 @@
         <result property="maxValue" column="max_value"/>
         <result property="unit" column="unit"/>
         <result property="currentValue" column="current_value"/>
-        <association property="deviceVO" javaType="com.example.vo.DeviceVO">
-            <result property="id" column="id"/>
-            <result property="deviceNumber" column="device_number"/>
-            <result property="deviceName" column="device_name"/>
-            <result property="remark" column="remark"/>
-        </association>
-        <association property="componentVO" javaType="com.example.vo.ComponentVO">
-            <result property="id" column="component_id"/>
-            <result property="componentNumber" column="component_number"/>
-            <result property="componentName" column="component_name"/>
-            <result property="remark" column="component_remark"/>
-        </association>
     </resultMap>
 
     <sql id="QueryDeviceSelect">

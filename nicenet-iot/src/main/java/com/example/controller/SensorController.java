@@ -31,12 +31,7 @@ public class SensorController extends BaseController<Sensor, SensorDTO, SensorVO
         return super.getService().preAddList(dtoList);
     }
 
-    @Override
-    protected void postAddList(List<Sensor> sensors) {
-        super.getService().postAddList(sensors);
-    }
-
-    @Override
+    /*@Override
     public Response<List<SensorVO>> list(SensorDTO dto) {
         return Response.success(super.getService().list(dto));
     }
@@ -44,5 +39,5 @@ public class SensorController extends BaseController<Sensor, SensorDTO, SensorVO
     @Override
     public Response<Page<SensorVO>> page(SensorDTO dto) {
         return Response.success(super.getService().page(dto));
-    }
+    }*/
 }

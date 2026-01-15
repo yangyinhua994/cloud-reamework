@@ -50,6 +50,11 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @PostMapping("/add/list")
     @Transactional(rollbackFor = Exception.class)
     public Response<Void> addList(@RequestBody @Validated(Add.class) List<D> dtoList) {
+        if (CollectionUtils.isNotEmpty(dtoList)) {
+            for (D d : dtoList) {
+                d.setId(null);
+            }
+        }
         List<T> ts = preAddList(dtoList);
         adds(ts);
         postAddList(ts);
