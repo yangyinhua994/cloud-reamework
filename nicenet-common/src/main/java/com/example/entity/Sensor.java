@@ -1,10 +1,11 @@
 package com.example.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.example.vo.SensorParamVO;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -25,42 +26,14 @@ public class Sensor extends BaseEntity {
     private String sensorName;
 
     /**
-     * 标识符号
-     */
-    private String symbol;
-    /**
-     * 参数名称
-     */
-    private String paramName;
-
-    /**
-     * 最优值
-     */
-    private BigDecimal optimalValue;
-
-    /**
-     * 最小取值
-     */
-    private BigDecimal miniValue;
-
-    /**
-     * 最大取值
-     */
-    private BigDecimal maxValue;
-
-    /**
-     * 单位
-     */
-    private String unit;
-
-    /**
-     * 当前值
-     */
-    private BigDecimal currentValue;
-
-    /**
      * 说明
      */
     private String remark;
+
+    @TableField(exist = false)
+    private List<Device> deviceList;
+
+    @TableField(exist = false)
+    private List<SensorParam> sensorParamList;
 
 }

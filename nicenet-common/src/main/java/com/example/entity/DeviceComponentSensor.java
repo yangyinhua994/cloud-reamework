@@ -14,5 +14,6 @@ public class DeviceComponentSensor extends BaseEntity {
     private Long deviceId;
     private Long componentId;
     private Long sensorId;
+    private Long sensorParamId;
 
 }

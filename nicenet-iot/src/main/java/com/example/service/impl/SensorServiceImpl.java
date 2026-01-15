@@ -3,19 +3,26 @@ package com.example.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.convert.SensorConvert;
+import com.example.dto.DeviceDTO;
 import com.example.dto.SensorDTO;
+import com.example.entity.Device;
 import com.example.entity.Sensor;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
 import com.example.mapper.SensorMapper;
 import com.example.service.DeviceComponentSensorService;
+import com.example.service.DeviceService;
+import com.example.service.DictService;
 import com.example.service.SensorService;
 import com.example.utils.CollectionUtils;
 import com.example.utils.ObjectUtils;
+import com.example.vo.SensorParamVO;
 import com.example.vo.SensorVO;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +33,11 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
     private final SensorConvert sensorConvert;
     private final DeviceComponentSensorService deviceComponentSensorService;
     private final SensorMapper sensorMapper;
+    private final DictService dictService;
+
+    @Lazy
+    @Autowired
+    private DeviceService deviceService;
 
     @Override
     public boolean exists(List<Long> sensorIds) {
@@ -58,9 +70,9 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
     }
 
     @Override
-    public List<Sensor> preAddList(List<SensorDTO> dtoList) {
+    public void preAddList(List<SensorDTO> dtoList) {
         if (CollectionUtils.isEmpty(dtoList)) {
-            return List.of();
+            return;
         }
         List<String> sensorNumbers = dtoList.stream().map(SensorDTO::getSensorNumber).filter(ObjectUtils::isNotEmpty).toList();
         List<Sensor> sensors = getBySensorNumbers(sensorNumbers);
@@ -68,7 +80,10 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
             String sensorNumber = sensors.get(0).getSensorNumber();
             ApiException.error("传感器编号重复: " + sensorNumber);
         }
-        return sensorConvert.dtoToEntity(dtoList);
+        for (SensorDTO sensorDTO : dtoList) {
+            List<DeviceDTO> deviceDTOList = sensorDTO.getDeviceDTOList();
+            deviceService.checkIdByDTOList(deviceDTOList);
+        }
     }
 
     @Override
@@ -95,6 +110,72 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
         LambdaQueryWrapper<Sensor> queryWrapper = new LambdaQueryWrapper<Sensor>()
                 .in(Sensor::getSensorNumber, sensorNumbers);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public void preList(SensorDTO dto, LambdaQueryWrapper<Sensor> queryWrapper) {
+        queryWrapper.eq(Sensor::getSensorNumber, dto.getSensorNumber())
+                .like(Sensor::getSensorNumber, dto.getSensorName());
+    }
+
+    @Override
+    public void postAddList(List<Sensor> sensors) {
+        if (CollectionUtils.isEmpty(sensors)) {
+            return;
+        }
+        deviceComponentSensorService.addBySensor(sensors);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void preUpdate(SensorDTO dto) {
+        if (ObjectUtils.isEmpty(dto)) {
+            return;
+        }
+        List<DeviceDTO> deviceDTOList = dto.getDeviceDTOList();
+        if (CollectionUtils.isEmpty(deviceDTOList)) {
+            return;
+        }
+        deviceService.checkIdByDTOList(deviceDTOList);
+        deviceComponentSensorService.removeBySensor(dto);
+    }
+
+    @Override
+    public void postUpdate(Sensor entity) {
+        if (ObjectUtils.isEmpty(entity)) {
+            return;
+        }
+        deviceComponentSensorService.addBySensor(entity);
+    }
+
+    @Override
+    public void postDelete(Long id) {
+        deviceComponentSensorService.removeBySensorId(id);
+    }
+
+    @Override
+    public void preReturn(List<SensorVO> sensorVOList) {
+        if (CollectionUtils.isNotEmpty(sensorVOList)) {
+            for (SensorVO sensorVO : sensorVOList) {
+                if (ObjectUtils.isNotEmpty(sensorVO)) {
+                    List<SensorParamVO> sensorParamVOList = sensorVO.getSensorParamVOList();
+                    if (CollectionUtils.isNotEmpty(sensorParamVOList)) {
+                        for (SensorParamVO sensorParamVO : sensorParamVOList) {
+                            if (ObjectUtils.isNotEmpty(sensorParamVO.getUnit())) {
+                                Long unitId = sensorParamVO.getUnitId();
+                                if (ObjectUtils.isNotEmpty(unitId)) {
+                                    sensorParamVO.setUnit(dictService.getDictValue(unitId));
+                                }
+                                Long dataTypeId = sensorParamVO.getDataTypeId();
+                                if (ObjectUtils.isNotEmpty(dataTypeId)) {
+                                    sensorParamVO.setDataType(dictService.getDictValue(dataTypeId));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

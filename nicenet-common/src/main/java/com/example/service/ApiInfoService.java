@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ApiInfoService extends BaseService<ApiInfo> {
 
-    List<ApiInfo> preAddList(List<ApiInfoDTO> dtoList);
+    void preAddList(List<ApiInfoDTO> dtoList);
 
     List<ApiInfo> queryTreeByIds(Long Ids);
 

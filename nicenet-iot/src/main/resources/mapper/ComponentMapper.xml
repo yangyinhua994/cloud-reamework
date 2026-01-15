@@ -7,66 +7,97 @@
         <result property="componentNumber" column="component_number"/>
         <result property="componentName" column="component_name"/>
         <result property="remark" column="component_remark"/>
+        <result property="createTime" column="component_create_time"/>
+        <result property="updateTime" column="component_update_time"/>
+        <result property="createUser" column="component_create_user"/>
+        <result property="updateUser" column="component_update_user"/>
+        <result property="deleted" column="component_deleted"/>
+        <result property="version" column="component_version"/>
         <collection property="sensorVOList" ofType="com.example.vo.SensorVO">
             <result property="id" column="sensor_id"/>
             <result property="sensorNumber" column="sensor_number"/>
             <result property="sensorName" column="sensor_name"/>
-            <result property="symbol" column="symbol"/>
-            <result property="paramName" column="param_name"/>
-            <result property="optimalValue" column="optimal_value"/>
-            <result property="miniValue" column="mini_value"/>
-            <result property="maxValue" column="max_value"/>
-            <result property="unit" column="unit"/>
-            <result property="currentValue" column="current_value"/>
+            <result property="remark" column="sensor_remark"/>
+            <collection property="sensorParamVOList" ofType="com.example.vo.SensorParamVO">
+                <result property="symbol" column="symbol"/>
+                <result property="paramName" column="param_name"/>
+                <result property="dataTypeId" column="sp.data_type_id"/>
+                <result property="optimalValue" column="optimal_value"/>
+                <result property="miniValue" column="mini_value"/>
+                <result property="maxValue" column="max_value"/>
+                <result property="unitId" column="unit_id"/>
+                <result property="currentValue" column="current_value"/>
+                <result property="remark" column="sensor_param_remark"/>
+            </collection>
         </collection>
     </resultMap>
 
-    <sql id="QueryDeviceSelect">
-        SELECT c.id     AS component_id,
+    <sql id="QueryComponentVOSelect">
+        SELECT c.id          AS component_id,
                c.component_number,
                c.component_name,
-               c.remark AS component_remark,
-               d.id     AS device_id,
+               c.remark      AS component_remark,
+               c.create_time as component_create_time,
+               c.update_time as component_update_time,
+               c.create_user as component_create_user,
+               c.update_user as component_update_user,
+               c.deleted     as component_deleted,
+               c.version     as component_version,
+               d.id          AS device_id,
                d.device_number,
                d.device_name,
-               d.remark    device_remark,
-               s.id     AS sensor_id,
+               d.remark         device_remark,
+               s.id          AS sensor_id,
                s.sensor_number,
                s.sensor_name,
-               s.symbol,
-               s.param_name,
-               s.optimal_value,
-               s.mini_value,
-               s.max_value,
-               s.unit,
-               s.current_value
+               s.remark      AS sensor_remark,
+               sp.symbol,
+               sp.param_name,
+               sp.data_type_id,
+               sp.optimal_value,
+               sp.mini_value,
+               sp.max_value,
+               sp.unit_id,
+               sp.current_value,
+               sp.remark     AS sensor_param_remark
         FROM t_component AS c
                  LEFT JOIN t_device_component_sensor AS dcs ON dcs.component_id = c.id
                  LEFT JOIN t_device AS d ON d.id = dcs.device_id
                  LEFT JOIN t_sensor AS s ON s.id = dcs.sensor_id
+                 LEFT JOIN t_sensor_param AS sp ON s.id = dcs.sensor_param_id
     </sql>
 
-    <sql id="QueryDeviceWhere">
+    <sql id="QueryComponentVOWhere">
         <where>
+            <if test="dto.id != null">
+                AND c.id = #{dto.id}
+            </if>
+            <if test="dto.ids != null and dto.ids.size() > 0">
+                AND c.id IN
+                <foreach item="item" collection="dto.ids" separator="," close=")" open="(" index="">
+                    #{item}
+                </foreach>
+                />
+            </if>
             <if test="dto != null">
                 <if test="dto.componentNumber != null">
-                    AND d.component_number LIKE CONCAT('%', #{componentNumber}, '%')
+                    AND d.component_number = #{dto.componentNumber}
                 </if>
                 <if test="dto.componentNumber != null">
-                    AND d.component_name LIKE CONCAT('%', #{componentNumber}, '%')
+                    AND d.component_name LIKE CONCAT('%', #{dto.componentNumber}, '%')
                 </if>
             </if>
         </where>
     </sql>
 
     <select id="list" resultMap="ComponentVO">
-        <include refid="QueryDeviceSelect"/>
-        <include refid="QueryDeviceWhere"/>
+        <include refid="QueryComponentVOSelect"/>
+        <include refid="QueryComponentVOWhere"/>
     </select>
 
     <select id="page" resultMap="ComponentVO">
-        <include refid="QueryDeviceSelect"/>
-        <include refid="QueryDeviceWhere"/>
+        <include refid="QueryComponentVOSelect"/>
+        <include refid="QueryComponentVOWhere"/>
     </select>
 
 </mapper>

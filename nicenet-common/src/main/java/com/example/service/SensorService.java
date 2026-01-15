@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dto.SensorDTO;
 import com.example.entity.Sensor;
@@ -14,7 +15,7 @@ public interface SensorService extends BaseService<Sensor> {
 
     void checkSensorIds(List<SensorDTO> dtoList);
 
-    List<Sensor> preAddList(List<SensorDTO> dtoList);
+    void preAddList(List<SensorDTO> dtoList);
 
     List<SensorVO> list(SensorDTO dto);
 
@@ -22,4 +23,15 @@ public interface SensorService extends BaseService<Sensor> {
 
     List<Sensor> getBySensorNumbers(List<String> sensorNumbers);
 
+    void preList(SensorDTO dto, LambdaQueryWrapper<Sensor> queryWrapper);
+
+    void postAddList(List<Sensor> sensors);
+
+    void preUpdate(SensorDTO dto);
+
+    void postUpdate(Sensor entity);
+
+    void postDelete(Long id);
+
+    void preReturn(List<SensorVO> sensorVOList);
 }

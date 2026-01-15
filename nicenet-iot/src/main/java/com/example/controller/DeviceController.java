@@ -27,8 +27,8 @@ public class DeviceController extends BaseController<Device, DeviceDTO, DeviceVO
     }
 
     @Override
-    protected List<Device> preAddList(List<DeviceDTO> dtoList) {
-        return super.getService().preAddList(dtoList);
+    protected void preAddList(List<DeviceDTO> dtoList) {
+        super.getService().preAddList(dtoList);
     }
 
     @Override
@@ -44,5 +44,20 @@ public class DeviceController extends BaseController<Device, DeviceDTO, DeviceVO
     @Override
     public Response<Page<DeviceVO>> page(DeviceDTO dto) {
         return Response.success(super.getService().page(dto));
+    }
+
+    @Override
+    protected void preUpdate(DeviceDTO dto) {
+        super.getService().preUpdate(dto);
+    }
+
+    @Override
+    protected void postUpdate(Device entity) {
+        super.getService().postUpdate(entity);
+    }
+
+    @Override
+    protected void preReturn(List<DeviceVO> deviceVOS) {
+        super.getService().preReturn(deviceVOS);
     }
 }

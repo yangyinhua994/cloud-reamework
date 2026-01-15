@@ -18,11 +18,17 @@ public interface ComponentService extends BaseService<Component> {
 
     List<Component> getByComponentNumbers(List<String> componentNumbers);
 
-    List<Component> preAddList(List<ComponentDTO> dtoList);
+    void preAddList(List<ComponentDTO> dtoList);
 
     void postAddList(List<Component> components);
 
     List<ComponentVO> list(ComponentDTO dto);
 
     Page<ComponentVO> page(ComponentDTO dto);
+
+    void preUpdate(ComponentDTO dto);
+
+    void postUpdate(Component entity);
+
+    void preReturn(List<ComponentVO> componentVOS);
 }

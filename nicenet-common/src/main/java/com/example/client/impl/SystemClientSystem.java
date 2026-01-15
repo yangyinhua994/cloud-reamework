@@ -2,6 +2,7 @@ package com.example.client.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.client.SystemClient;
+import com.example.convert.ApiInfoConvert;
 import com.example.convert.UserApiInfoConvert;
 import com.example.dto.ApiInfoDTO;
 import com.example.dto.UserApiInfoDTO;
@@ -29,12 +30,14 @@ public class SystemClientSystem implements SystemClient {
     private final ApiInfoService apiInfoService;
     private final UserApiInfoService userApiInfoService;
     private final UserApiInfoConvert userApiInfoConvert;
+    private final ApiInfoConvert apiInfoConvert;
 
     public Response<Void> addList(List<ApiInfoDTO> dtoList) {
         if (CollectionUtils.isEmpty(dtoList)) {
             ApiException.error(ResponseMessageEnum.DATA_NOT_EXIST);
         }
-        List<ApiInfo> apiInfos = apiInfoService.preAddList(dtoList);
+        apiInfoService.preAddList(dtoList);
+        List<ApiInfo> apiInfos = apiInfoConvert.dtoToEntity(dtoList);
         apiInfoService.saveBatch(apiInfos);
         return Response.success();
     }

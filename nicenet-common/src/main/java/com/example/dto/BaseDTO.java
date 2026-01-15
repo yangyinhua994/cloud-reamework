@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -19,6 +20,7 @@ public class BaseDTO {
     @TableId
     @NotNull(message = "ID不能为空", groups = {UpdateById.class, Delete.class})
     private Long id;
+    private List<Long> ids;
     private LocalDateTime createTime;
     private String createUser;
     private LocalDateTime updateTime;

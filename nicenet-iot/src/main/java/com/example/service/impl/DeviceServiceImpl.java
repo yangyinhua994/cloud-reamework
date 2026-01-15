@@ -3,12 +3,10 @@ package com.example.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.controller.DeviceComponentSensorController;
 import com.example.convert.DeviceConvert;
 import com.example.dto.ComponentDTO;
-import com.example.dto.DeviceComponentSensorDTO;
 import com.example.dto.DeviceDTO;
-import com.example.dto.SensorDTO;
+import com.example.entity.Component;
 import com.example.entity.Device;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
@@ -21,8 +19,6 @@ import com.example.utils.CollectionUtils;
 import com.example.utils.ObjectUtils;
 import com.example.vo.DeviceVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,7 +45,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> imp
     }
 
     @Override
-    public List<Device> preAddList(List<DeviceDTO> dtoList) {
+    public void preAddList(List<DeviceDTO> dtoList) {
 
         List<String> deviceNumbers = dtoList.stream().map(DeviceDTO::getDeviceNumber).filter(ObjectUtils::isNotEmpty).toList();
         List<Device> devices = this.getByDeviceNumbers(deviceNumbers);
@@ -62,8 +58,6 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> imp
         if (CollectionUtils.isNotEmpty(componentDTOListS)) {
             componentDTOListS.forEach(componentService::checkComponentIds);
         }
-
-        return deviceConvert.dtoToEntity(dtoList);
     }
 
     @Override
@@ -107,6 +101,44 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> imp
         if (!this.exists(ids)) {
             ApiException.error(ResponseMessageEnum.DEVICE_NOT_EXIST);
         }
+    }
+
+    @Override
+    public void checkIdByDTOList(List<DeviceDTO> deviceDTOList) {
+        if (CollectionUtils.isEmpty(deviceDTOList)) {
+            return;
+        }
+        List<Long> ids = deviceDTOList.stream().map(DeviceDTO::getId).filter(ObjectUtils::isNotEmpty).toList();
+        if (CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        this.checkIds(ids);
+    }
+
+    @Override
+    public void postUpdate(Device entity) {
+        if (ObjectUtils.isEmpty(entity)) {
+            return;
+        }
+        deviceComponentSensorService.addByDevice(entity);
+    }
+
+    @Override
+    public void preUpdate(DeviceDTO dto) {
+        if (ObjectUtils.isEmpty(dto)) {
+            return;
+        }
+        deviceComponentSensorService.removeByDevice(dto);
+    }
+
+    @Override
+    public void preReturn(List<DeviceVO> deviceVOS) {
+        if (CollectionUtils.isEmpty(deviceVOS)) {
+            return;
+        }
+        deviceVOS.forEach(deviceVO -> {
+            componentService.preReturn(deviceVO.getComponentVOList());
+        });
     }
 
 }

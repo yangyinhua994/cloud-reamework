@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.annotation.ApiDesc;
 import com.example.convert.SensorConvert;
@@ -7,6 +8,7 @@ import com.example.dto.SensorDTO;
 import com.example.entity.Sensor;
 import com.example.response.Response;
 import com.example.service.SensorService;
+import com.example.utils.ObjectUtils;
 import com.example.vo.SensorVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +29,27 @@ public class SensorController extends BaseController<Sensor, SensorDTO, SensorVO
     }
 
     @Override
-    protected List<Sensor> preAddList(List<SensorDTO> dtoList) {
-        return super.getService().preAddList(dtoList);
+    protected void preAddList(List<SensorDTO> dtoList) {
+        super.getService().preAddList(dtoList);
     }
 
-    /*@Override
+    @Override
+    protected void postAddList(List<Sensor> sensors) {
+        super.getService().postAddList(sensors);
+    }
+
+
+    @Override
+    protected void preList(SensorDTO dto, LambdaQueryWrapper<Sensor> queryWrapper) {
+        super.getService().preList(dto, queryWrapper);
+    }
+
+    @Override
+    protected void prePageList(SensorDTO dto, LambdaQueryWrapper<Sensor> queryWrapper) {
+        preList(dto, queryWrapper);
+    }
+
+    @Override
     public Response<List<SensorVO>> list(SensorDTO dto) {
         return Response.success(super.getService().list(dto));
     }
@@ -39,5 +57,25 @@ public class SensorController extends BaseController<Sensor, SensorDTO, SensorVO
     @Override
     public Response<Page<SensorVO>> page(SensorDTO dto) {
         return Response.success(super.getService().page(dto));
-    }*/
+    }
+
+    @Override
+    protected void preUpdate(SensorDTO dto) {
+        super.getService().preUpdate(dto);
+    }
+
+    @Override
+    protected void postUpdate(Sensor entity) {
+        super.getService().postUpdate(entity);
+    }
+
+    @Override
+    protected void postDelete(Long id) {
+        super.getService().postDelete(id);
+    }
+
+    @Override
+    protected void preReturn(List<SensorVO> sensorVOList) {
+        super.getService().preReturn(sensorVOList);
+    }
 }

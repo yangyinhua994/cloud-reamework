@@ -10,7 +10,7 @@ import java.util.List;
 public interface DeviceService extends BaseService<Device> {
     List<Device> getByDeviceNumbers(List<String> deviceNumbers);
 
-    List<Device> preAddList(List<DeviceDTO> dtoList);
+    void preAddList(List<DeviceDTO> dtoList);
 
     List<DeviceVO> list(DeviceDTO dto);
 
@@ -21,4 +21,12 @@ public interface DeviceService extends BaseService<Device> {
     boolean exists(List<Long> ids);
 
     void checkIds(List<Long> ids);
+
+    void checkIdByDTOList(List<DeviceDTO> deviceDTOList);
+
+    void postUpdate(Device entity);
+
+    void preUpdate(DeviceDTO dto);
+
+    void preReturn(List<DeviceVO> deviceVOS);
 }

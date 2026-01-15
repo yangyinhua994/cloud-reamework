@@ -22,7 +22,7 @@ public class ApiInfoServiceImpl extends BaseServiceImpl<ApiInfoMapper, ApiInfo> 
     private final ApiInfoConvert apiInfoConvert;
 
     @Override
-    public List<ApiInfo> preAddList(List<ApiInfoDTO> dtoList) {
+    public void preAddList(List<ApiInfoDTO> dtoList) {
 
         if (CollectionUtils.isEmpty(dtoList)) {
             ApiException.error(ResponseMessageEnum.DATA_NOT_EXIST);
@@ -37,7 +37,6 @@ public class ApiInfoServiceImpl extends BaseServiceImpl<ApiInfoMapper, ApiInfo> 
             }
             return false;
         });
-        return apiInfoConvert.dtoToEntity(dtoList);
     }
 
     @Override

@@ -82,9 +82,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     }
 
     @Override
-    public List<Component> preAddList(List<ComponentDTO> dtoList) {
+    public void preAddList(List<ComponentDTO> dtoList) {
         if (CollectionUtils.isEmpty(dtoList)) {
-            return List.of();
+            return;
         }
 
         checkComponentNumber(dtoList);
@@ -94,7 +94,6 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             sensorService.checkSensorIds(componentDTO.getSensorDTOList());
         }
 
-        return componentConvert.dtoToEntity(dtoList);
     }
 
     @Override
@@ -116,5 +115,31 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             return null;
         }
         return componentMapper.page(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
+    }
+
+    @Override
+    public void preUpdate(ComponentDTO dto) {
+        if (ObjectUtils.isEmpty(dto)) {
+            return;
+        }
+        deviceComponentSensorService.removeByComponent(dto);
+    }
+
+    @Override
+    public void postUpdate(Component entity) {
+        if (ObjectUtils.isEmpty(entity)) {
+            return;
+        }
+        deviceComponentSensorService.addByComponent(entity);
+    }
+
+    @Override
+    public void preReturn(List<ComponentVO> componentVOS) {
+        if (CollectionUtils.isEmpty(componentVOS)) {
+            return;
+        }
+        componentVOS.forEach(componentVO -> {
+            sensorService.preReturn(componentVO.getSensorVOList());
+        });
     }
 }

@@ -1,10 +1,10 @@
 package com.example.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class BaseVO {
 
     @TableId
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
     private LocalDateTime createTime;
     private String createUser;
@@ -22,5 +23,8 @@ public class BaseVO {
     private String updateUser;
     private Integer deleted;
     private Integer version;
+
+    protected void preReturn() {
+    }
 
 }

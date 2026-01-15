@@ -22,7 +22,7 @@ public class ApiInfoController extends BaseController<ApiInfo, ApiInfoDTO, ApiIn
     }
 
     @Override
-    protected List<ApiInfo> preAddList(List<ApiInfoDTO> dtoList) {
-        return super.getService().preAddList(dtoList);
+    protected void preAddList(List<ApiInfoDTO> dtoList) {
+        super.getService().preAddList(dtoList);
     }
 }

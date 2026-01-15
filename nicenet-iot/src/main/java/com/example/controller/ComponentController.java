@@ -7,7 +7,9 @@ import com.example.dto.ComponentDTO;
 import com.example.entity.Component;
 import com.example.response.Response;
 import com.example.service.ComponentService;
+import com.example.utils.CollectionUtils;
 import com.example.vo.ComponentVO;
+import com.example.vo.SensorVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,13 +30,13 @@ public class ComponentController extends BaseController<Component, ComponentDTO,
     }
 
     @Override
-    protected List<Component> preAddList(List<ComponentDTO> dtoList) {
-        return super.getService().preAddList(dtoList);
+    protected void preAddList(List<ComponentDTO> dtoList) {
+        super.getService().preAddList(dtoList);
     }
 
     @Override
     protected void postAddList(List<Component> components) {
-        super.getService().postAddList( components);
+        super.getService().postAddList(components);
     }
 
     @Override
@@ -45,5 +47,20 @@ public class ComponentController extends BaseController<Component, ComponentDTO,
     @Override
     public Response<Page<ComponentVO>> page(ComponentDTO dto) {
         return Response.success(super.getService().page(dto));
+    }
+
+    @Override
+    protected void preUpdate(ComponentDTO dto) {
+        super.getService().preUpdate(dto);
+    }
+
+    @Override
+    protected void postUpdate(Component entity) {
+        super.getService().postUpdate(entity);
+    }
+
+    @Override
+    protected void preReturn(List<ComponentVO> componentVOS) {
+        super.getService().preReturn(componentVOS);
     }
 }

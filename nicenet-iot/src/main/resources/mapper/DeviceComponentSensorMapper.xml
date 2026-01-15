@@ -1,4 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.DeviceComponentSensorMapper">
+
+    <resultMap id="DeviceComponentSensorVO" type="com.example.vo.DeviceComponentSensorVO">
+        <result property="id" column="id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="componentId" column="component_id"/>
+        <result property="sensorId" column="sensor_id"/>
+    </resultMap>
+    
+    <sql id="QueryDeviceComponentSensorVOSelect">
+        select dcs.id           as id,
+               dcs.device_id    as device_id,
+               dcs.component_id as component_id,
+               dcs.sensor_id    as sensor_id,
+               d.device_number,
+               d.device_name,
+               d.remark            device_remark,
+               d.create_time    as device_create_time,
+               d.update_time    as device_update_time,
+               d.create_user    as device_create_user,
+               d.update_user    as device_update_user,
+               d.deleted        as device_deleted,
+               d.version        as device_version,
+               c.component_number,
+               c.component_name,
+               c.remark         AS component_remark,
+               s.sensor_number,
+               s.sensor_name,
+               s.symbol,
+               s.param_name,
+               s.optimal_value,
+               s.mini_value,
+               s.max_value,
+               s.unit,
+               s.current_value s.remark as sensor_remark
+        from t_device_component_sensor as dcs
+                 left join t_device as d on d.id = dcs.device_id
+                 left join t_component as c on c.id = dcs.component_id
+                 left join t_sensor as s on s.id = dcs.sensor_id
+    </sql>
+
+    <sql id="QueryDeviceComponentSensorVOWhere">
+        <where>
+            <if test="dto != null">
+                <if test="dto.deviceId != null">
+                    AND device_id = #{dto.deviceId}
+                </if>
+                <if test="dto.componentId != null">
+                    AND component_id = #{dto.componentId}
+                </if>
+                <if test="dto.sensorId != null">
+                    AND sensor_id = #{dto.sensorId}
+                </if>
+            </if>
+        </where>
+    </sql>
+    
+    <select id="list" resultMap="DeviceComponentSensorVO">
+        <include refid="QueryDeviceComponentSensorVOSelect"/>
+        <include refid="QueryDeviceComponentSensorVOWhere"/>
+    </select>
+    <select id="page" resultType="com.example.vo.DeviceComponentSensorVO">
+        <include refid="QueryDeviceComponentSensorVOSelect"/>
+        <include refid="QueryDeviceComponentSensorVOWhere"/>
+    </select>
 </mapper>

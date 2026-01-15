@@ -24,6 +24,8 @@ public enum ResponseMessageEnum {
     DEVICE_NOT_EXIST("设备不存在"),
     CONTENT_NOT_EXIST("部件不存在"),
     SENSOR_NOT_EXIST("传感器不存在"),
+    UNIT_ID_ERROR("单位ID有误"),
+    DATA_TYPE_ID_ERROR("数据类型ID有误"),
     ;
 
     private final String message;
