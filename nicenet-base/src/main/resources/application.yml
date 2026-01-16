@@ -1,0 +1,19 @@
+project_name: meiling
+spring:
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}.yml"
+      - "optional:nacos:nicenet-common.yml"
+  application:
+    name: nicenet-base
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 111.229.239.47:8848
+        namespace: ${project_name}-${spring.profiles.active}
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+

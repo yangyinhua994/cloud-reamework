@@ -29,12 +29,11 @@
     </scm>
 
     <modules>
-        <module>common</module>
-        <module>base-service</module>
-        <module>gateway-service</module>
-        <module>user-service</module>
-        <module>order-service</module>
-        <module>finance-service</module>
+        <module>nicenet-common</module>
+        <module>nicenet-gateway</module>
+        <module>nicenet-base</module>
+        <module>nicenet-user</module>
+        <module>nicenet-system</module>
     </modules>
 
     <properties>
@@ -48,6 +47,7 @@
         <nacos.version>3.0.2</nacos.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
+        <easyexcel.version>3.3.2</easyexcel.version>
     </properties>
 
     <dependencies>
@@ -170,6 +170,12 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>0.12.6</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

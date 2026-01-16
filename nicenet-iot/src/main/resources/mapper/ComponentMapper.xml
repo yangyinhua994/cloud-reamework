@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ComponentMapper">
+
+    <resultMap id="ComponentVO" type="com.example.vo.ComponentVO">
+        <result property="id" column="component_id"/>
+        <result property="componentNumber" column="component_number"/>
+        <result property="componentName" column="component_name"/>
+        <result property="remark" column="component_remark"/>
+        <result property="createTime" column="component_create_time"/>
+        <result property="updateTime" column="component_update_time"/>
+        <result property="createUser" column="component_create_user"/>
+        <result property="updateUser" column="component_update_user"/>
+        <result property="deleted" column="component_deleted"/>
+        <result property="version" column="component_version"/>
+        <collection property="sensorVOList" ofType="com.example.vo.SensorVO">
+            <result property="id" column="sensor_id"/>
+            <result property="sensorNumber" column="sensor_number"/>
+            <result property="sensorName" column="sensor_name"/>
+            <result property="remark" column="sensor_remark"/>
+            <collection property="sensorParamVOList" ofType="com.example.vo.SensorParamVO">
+                <result property="symbol" column="symbol"/>
+                <result property="paramName" column="param_name"/>
+                <result property="dataTypeId" column="sp.data_type_id"/>
+                <result property="optimalValue" column="optimal_value"/>
+                <result property="miniValue" column="mini_value"/>
+                <result property="maxValue" column="max_value"/>
+                <result property="unitId" column="unit_id"/>
+                <result property="currentValue" column="current_value"/>
+                <result property="remark" column="sensor_param_remark"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <sql id="QueryComponentVOSelect">
+        SELECT c.id          AS component_id,
+               c.component_number,
+               c.component_name,
+               c.remark      AS component_remark,
+               c.create_time as component_create_time,
+               c.update_time as component_update_time,
+               c.create_user as component_create_user,
+               c.update_user as component_update_user,
+               c.deleted     as component_deleted,
+               c.version     as component_version,
+               d.id          AS device_id,
+               d.device_number,
+               d.device_name,
+               d.remark         device_remark,
+               s.id          AS sensor_id,
+               s.sensor_number,
+               s.sensor_name,
+               s.remark      AS sensor_remark,
+               sp.symbol,
+               sp.param_name,
+               sp.data_type_id,
+               sp.optimal_value,
+               sp.mini_value,
+               sp.max_value,
+               sp.unit_id,
+               sp.current_value,
+               sp.remark     AS sensor_param_remark
+        FROM t_component AS c
+                 LEFT JOIN t_device_component_sensor AS dcs ON dcs.component_id = c.id
+                 LEFT JOIN t_device AS d ON d.id = dcs.device_id
+                 LEFT JOIN t_sensor AS s ON s.id = dcs.sensor_id
+                 LEFT JOIN t_sensor_param AS sp ON sp.id = dcs.sensor_param_id
+    </sql>
+
+    <sql id="QueryComponentVOWhere">
+        <where>
+            <if test="dto.id != null">
+                AND c.id = #{dto.id}
+            </if>
+            <if test="dto.ids != null and dto.ids.size() > 0">
+                AND c.id IN
+                <foreach item="item" collection="dto.ids" separator="," close=")" open="(" index="">
+                    #{item}
+                </foreach>
+                />
+            </if>
+            <if test="dto != null">
+                <if test="dto.componentNumber != null">
+                    AND c.component_number = #{dto.componentNumber}
+                </if>
+                <if test="dto.componentName != null">
+                    AND c.component_name LIKE CONCAT('%', #{dto.componentName}, '%')
+                </if>
+                <if test="dto.deviceId != null">
+                    AND d.id = #{dto.deviceId}
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <select id="listData" resultMap="ComponentVO">
+        <include refid="QueryComponentVOSelect"/>
+        <include refid="QueryComponentVOWhere"/>
+    </select>
+
+    <select id="pageData" resultMap="ComponentVO">
+        <include refid="QueryComponentVOSelect"/>
+        <include refid="QueryComponentVOWhere"/>
+    </select>
+
+</mapper>
