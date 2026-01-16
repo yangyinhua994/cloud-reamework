@@ -2,48 +2,123 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.DeviceComponentSensorMapper">
 
-    <resultMap id="DeviceComponentSensorVO" type="com.example.vo.DeviceComponentSensorVO">
-        <result property="id" column="id"/>
-        <result property="deviceId" column="device_id"/>
-        <result property="componentId" column="component_id"/>
-        <result property="sensorId" column="sensor_id"/>
+    <resultMap id="DeviceVO" type="com.example.vo.DeviceVO">
+        <result property="id" column="device_id"/>
+        <result property="deviceNumber" column="device_number"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="remark" column="device_remark"/>
+        <result property="createTime" column="device_create_time"/>
+        <result property="updateTime" column="device_update_time"/>
+        <result property="createUser" column="device_create_user"/>
+        <result property="updateUser" column="device_update_user"/>
+        <result property="deleted" column="device_deleted"/>
+        <result property="version" column="device_version"/>
+        <collection property="componentVOList" ofType="com.example.vo.ComponentVO">
+            <result property="id" column="component_id"/>
+            <result property="componentNumber" column="component_number"/>
+            <result property="componentName" column="component_name"/>
+            <result property="remark" column="component_remark"/>
+            <result property="createTime" column="component_create_time"/>
+            <result property="updateTime" column="component_update_time"/>
+            <result property="createUser" column="component_create_user"/>
+            <result property="updateUser" column="component_update_user"/>
+            <result property="deleted" column="component_deleted"/>
+            <result property="version" column="component_version"/>
+            <collection property="sensorVOList" ofType="com.example.vo.SensorVO">
+                <result property="id" column="sensor_id"/>
+                <result property="sensorNumber" column="sensor_number"/>
+                <result property="sensorName" column="sensor_name"/>
+                <result property="remark" column="sensor_remark"/>
+                <collection property="sensorParamVOList" ofType="com.example.vo.SensorParamVO">
+                    <result property="id" column="sensor_param_id"/>
+                    <result property="symbol" column="sensor_param_symbol"/>
+                    <result property="paramName" column="sensor_param_param_name"/>
+                    <result property="dataTypeId" column="sensor_param_data_type_id"/>
+                    <result property="optimalValue" column="sensor_param_optimal_value"/>
+                    <result property="miniValue" column="sensor_param_mini_value"/>
+                    <result property="maxValue" column="sensor_param_max_value"/>
+                    <result property="unitId" column="sensor_param_unit_id"/>
+                    <result property="currentValue" column="sensor_param_current_value"/>
+                    <result property="remark" column="sensor_param_remark"/>
+                    <result property="createTime" column="sensor_param_create_time"/>
+                    <result property="updateTime" column="sensor_param_update_time"/>
+                    <result property="createUser" column="sensor_param_create_user"/>
+                    <result property="updateUser" column="sensor_param_update_user"/>
+                    <result property="deleted" column="sensor_param_deleted"/>
+                    <result property="version" column="sensor_param_version"/>
+                </collection>
+            </collection>
+        </collection>
     </resultMap>
-    
-    <sql id="QueryDeviceComponentSensorVOSelect">
-        select dcs.id           as id,
-               dcs.device_id    as device_id,
-               dcs.component_id as component_id,
-               dcs.sensor_id    as sensor_id,
-               d.device_number,
-               d.device_name,
-               d.remark            device_remark,
-               d.create_time    as device_create_time,
-               d.update_time    as device_update_time,
-               d.create_user    as device_create_user,
-               d.update_user    as device_update_user,
-               d.deleted        as device_deleted,
-               d.version        as device_version,
-               c.component_number,
-               c.component_name,
-               c.remark         AS component_remark,
-               s.sensor_number,
-               s.sensor_name,
-               s.symbol,
-               s.param_name,
-               s.optimal_value,
-               s.mini_value,
-               s.max_value,
-               s.unit,
-               s.current_value s.remark as sensor_remark
-        from t_device_component_sensor as dcs
-                 left join t_device as d on d.id = dcs.device_id
-                 left join t_component as c on c.id = dcs.component_id
-                 left join t_sensor as s on s.id = dcs.sensor_id
+
+
+    <sql id="QueryDeviceVOSelect">
+        SELECT d.id               AS device_id,
+               d.device_number    AS device_number,
+               d.device_name      AS device_name,
+               d.remark           AS device_remark,
+               d.create_time      AS device_create_time,
+               d.update_time      AS device_update_time,
+               d.create_user      AS device_create_user,
+               d.update_user      AS device_update_user,
+               d.deleted          AS device_deleted,
+               d.version          AS device_version,
+               c.id               AS component_id,
+               c.component_number AS component_number,
+               c.component_name   AS component_name,
+               c.remark           AS component_remark,
+               c.create_time      AS component_create_time,
+               c.update_time      AS component_update_time,
+               c.create_user      AS component_create_user,
+               c.update_user      AS component_update_user,
+               c.deleted          AS component_deleted,
+               c.version          AS component_version,
+               s.id               AS sensor_id,
+               s.sensor_number    AS sensor_number,
+               s.sensor_name      AS sensor_name,
+               s.remark           AS sensor_remark,
+               s.create_time      AS sensor_create_time,
+               s.update_time      AS sensor_update_time,
+               s.create_user      AS sensor_create_user,
+               s.update_user      AS sensor_update_user,
+               s.deleted          AS sensor_deleted,
+               s.version          AS sensor_version,
+               sp.id              AS sensor_param_id,
+               sp.symbol          AS sensor_param_symbol,
+               sp.param_name      AS sensor_param_param_name,
+               sp.data_type_id    AS sensor_param_data_type_id,
+               sp.optimal_value   AS sensor_param_optimal_value,
+               sp.mini_value      AS sensor_param_mini_value,
+               sp.max_value       AS sensor_param_max_value,
+               sp.unit_id         AS sensor_param_unit_id,
+               sp.current_value   AS sensor_param_current_value,
+               sp.remark          AS sensor_param_remark,
+               sp.create_time     AS sensor_param_create_time,
+               sp.update_time     AS sensor_param_update_time,
+               sp.create_user     AS sensor_param_create_user,
+               sp.update_user     AS sensor_param_update_user,
+               sp.deleted         AS sensor_param_deleted,
+               sp.version         AS sensor_param_version
+        FROM t_device_component_sensor AS dcs
+                 LEFT JOIN t_device AS d ON d.id = dcs.device_id
+                 LEFT JOIN t_component AS c ON c.id = dcs.component_id
+                 LEFT JOIN t_sensor AS s ON s.id = dcs.sensor_id
+                 LEFT JOIN t_sensor_param AS sp ON sp.id = dcs.sensor_param_id
     </sql>
 
-    <sql id="QueryDeviceComponentSensorVOWhere">
+    <sql id="QueryDeviceVOWhere">
         <where>
             <if test="dto != null">
+                <if test="dto.id != null">
+                    AND dcs.id = #{dto.id}
+                </if>
+                <if test="dto.ids != null and dto.ids.size() > 0">
+                    AND dcs.id IN
+                    <foreach item="item" collection="dto.ids" separator="," close=")" open="(" index="">
+                        #{item}
+                    </foreach>
+                    />
+                </if>
                 <if test="dto.deviceId != null">
                     AND device_id = #{dto.deviceId}
                 </if>
@@ -53,16 +128,19 @@
                 <if test="dto.sensorId != null">
                     AND sensor_id = #{dto.sensorId}
                 </if>
+                <if test="dto.sensorParamId != null">
+                    AND sensor_param_id = #{dto.sensorParamId}
+                </if>
             </if>
         </where>
     </sql>
-    
-    <select id="list" resultMap="DeviceComponentSensorVO">
-        <include refid="QueryDeviceComponentSensorVOSelect"/>
-        <include refid="QueryDeviceComponentSensorVOWhere"/>
+
+    <select id="listData" resultMap="DeviceVO">
+        <include refid="QueryDeviceVOSelect"/>
+        <include refid="QueryDeviceVOWhere"/>
     </select>
-    <select id="page" resultType="com.example.vo.DeviceComponentSensorVO">
-        <include refid="QueryDeviceComponentSensorVOSelect"/>
-        <include refid="QueryDeviceComponentSensorVOWhere"/>
+    <select id="pageData" resultMap="DeviceVO">
+        <include refid="QueryDeviceVOSelect"/>
+        <include refid="QueryDeviceVOWhere"/>
     </select>
 </mapper>
