@@ -3,10 +3,7 @@ package com.example.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.dto.ComponentDTO;
-import com.example.dto.DeviceComponentSensorDTO;
-import com.example.dto.DeviceDTO;
-import com.example.dto.SensorDTO;
+import com.example.dto.*;
 import com.example.entity.*;
 import com.example.mapper.DeviceComponentSensorMapper;
 import com.example.service.DeviceComponentSensorService;
@@ -100,6 +97,55 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addBySensorParam(SensorParam entity) {
+        if (ObjectUtils.isEmpty(entity)) {
+            return;
+        }
+        addBySensorParams(List.of(entity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addBySensorParams(List<SensorParam> entityList) {
+        List<DeviceComponentSensor> deviceComponentSensors = buildBySensorParams(entityList);
+        if (CollectionUtils.isEmpty(deviceComponentSensors)) {
+            return;
+        }
+        saveBatch(deviceComponentSensors);
+    }
+
+    @Override
+    public List<DeviceComponentSensor> buildBySensorParams(List<SensorParam> entityList) {
+        List<DeviceComponentSensor> deviceComponentSensors = new ArrayList<>();
+        if (CollectionUtils.isEmpty(entityList)) {
+            return deviceComponentSensors;
+        }
+        for (SensorParam sensorParam : entityList) {
+            Long sensorParamId = sensorParam.getId();
+            if (ObjectUtils.isEmpty(sensorParamId)) {
+                continue;
+            }
+            List<Sensor> sensorList = sensorParam.getSensorList();
+            if (CollectionUtils.isEmpty(sensorList)) {
+                continue;
+            }
+            for (Sensor sensor : sensorList) {
+                Long sensorId = sensor.getId();
+                if (ObjectUtils.isEmpty(sensorId)) {
+                    continue;
+                }
+                DeviceComponentSensor componentSensor = build(null, null, sensorId, sensorParamId);
+                if (ObjectUtils.isEmpty(componentSensor)) {
+                    continue;
+                }
+                deviceComponentSensors.add(componentSensor);
+            }
+        }
+        return deviceComponentSensors;
+    }
+
+    @Override
     public List<DeviceComponentSensor> buildByDevices(List<Device> entityList) {
         List<DeviceComponentSensor> deviceComponentSensors = new ArrayList<>();
         if (CollectionUtils.isEmpty(entityList)) {
@@ -126,7 +172,33 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
 
     @Override
     public List<DeviceComponentSensor> buildByComponents(List<Component> entityList) {
-        return buildByComponents(null, entityList);
+        if (CollectionUtils.isEmpty(entityList)) {
+            return new ArrayList<>();
+        }
+        List<DeviceComponentSensor> deviceComponentSensors = buildByComponents(null, entityList);
+        for (Component component : entityList) {
+            Long componentId = component.getId();
+            if (ObjectUtils.isEmpty(componentId)) {
+                continue;
+            }
+            List<Device> deviceList = component.getDeviceList();
+            if (CollectionUtils.isEmpty(deviceList)) {
+                continue;
+            }
+            for (Device device : deviceList) {
+                Long deviceId = device.getId();
+                if (ObjectUtils.isEmpty(deviceId)) {
+                    continue;
+                }
+                DeviceComponentSensor deviceComponentSensor = build(deviceId, componentId, null, null);
+                if (ObjectUtils.isEmpty(deviceComponentSensor)) {
+                    continue;
+                }
+                deviceComponentSensors.add(deviceComponentSensor);
+            }
+        }
+
+        return deviceComponentSensors;
     }
 
     @Override
@@ -251,6 +323,14 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
     }
 
     @Override
+    public void removeBySensorParam(SensorParamDTO sensorDTO) {
+        if (ObjectUtils.isEmpty(sensorDTO)) {
+            return;
+        }
+        this.remove(null, null, null, sensorDTO.getId());
+    }
+
+    @Override
     public void removeByDevice(DeviceDTO deviceDTO) {
         if (ObjectUtils.isEmpty(deviceDTO)) {
             return;
@@ -296,13 +376,13 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
     }
 
     @Override
-    public List<DeviceComponentSensorVO> list(DeviceComponentSensorDTO dto) {
-        return deviceComponentSensorMapper.list(dto);
+    public List<DeviceComponentSensorVO> listData(DeviceComponentSensorDTO dto) {
+        return deviceComponentSensorMapper.listData(dto);
     }
 
     @Override
-    public Page<DeviceComponentSensorVO> page(DeviceComponentSensorDTO dto) {
-        return deviceComponentSensorMapper.page(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
+    public Page<DeviceComponentSensorVO> pageData(DeviceComponentSensorDTO dto) {
+        return deviceComponentSensorMapper.pageData(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
     }
 
 }

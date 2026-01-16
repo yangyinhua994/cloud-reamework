@@ -1,14 +1,8 @@
 package com.example.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.dto.ComponentDTO;
-import com.example.dto.DeviceComponentSensorDTO;
-import com.example.dto.DeviceDTO;
-import com.example.dto.SensorDTO;
-import com.example.entity.Component;
-import com.example.entity.Device;
-import com.example.entity.DeviceComponentSensor;
-import com.example.entity.Sensor;
+import com.example.dto.*;
+import com.example.entity.*;
 import com.example.vo.DeviceComponentSensorVO;
 
 import java.util.List;
@@ -27,6 +21,12 @@ public interface DeviceComponentSensorService extends BaseService<DeviceComponen
 
     void addBySensor(List<Sensor> entityList);
 
+    void addBySensorParam(SensorParam entity);
+
+    void addBySensorParams(List<SensorParam> entityList);
+
+    List<DeviceComponentSensor> buildBySensorParams(List<SensorParam> entityList);
+
     List<DeviceComponentSensor> buildByDevices(List<Device> entityList);
 
     List<DeviceComponentSensor> buildByComponents(List<Component> entityList);
@@ -41,6 +41,8 @@ public interface DeviceComponentSensorService extends BaseService<DeviceComponen
 
     void removeBySensor(SensorDTO sensorDTO);
 
+    void removeBySensorParam(SensorParamDTO sensorDTO);
+
     void removeByDevice(DeviceDTO deviceDTO);
 
     void removeByComponent(ComponentDTO componentDTO);
@@ -51,7 +53,7 @@ public interface DeviceComponentSensorService extends BaseService<DeviceComponen
 
     void remove(Long deviceId, Long componentId, Long sensorId, Long sensorParamId);
 
-    List<DeviceComponentSensorVO> list(DeviceComponentSensorDTO dto);
+    List<DeviceComponentSensorVO> listData(DeviceComponentSensorDTO dto);
 
-    Page<DeviceComponentSensorVO> page(DeviceComponentSensorDTO dto);
+    Page<DeviceComponentSensorVO> pageData(DeviceComponentSensorDTO dto);
 }

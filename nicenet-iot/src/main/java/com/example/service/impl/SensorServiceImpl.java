@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.convert.SensorConvert;
 import com.example.dto.DeviceDTO;
 import com.example.dto.SensorDTO;
-import com.example.entity.Device;
 import com.example.entity.Sensor;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
@@ -19,24 +18,22 @@ import com.example.utils.ObjectUtils;
 import com.example.vo.SensorParamVO;
 import com.example.vo.SensorVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> implements SensorService {
 
-    private final SensorConvert sensorConvert;
     private final DeviceComponentSensorService deviceComponentSensorService;
     private final SensorMapper sensorMapper;
     private final DictService dictService;
-
     @Lazy
-    @Autowired
+    @Resource
     private DeviceService deviceService;
 
     @Override
@@ -87,19 +84,19 @@ public class SensorServiceImpl extends BaseServiceImpl<SensorMapper, Sensor> imp
     }
 
     @Override
-    public List<SensorVO> list(SensorDTO dto) {
+    public List<SensorVO> listData(SensorDTO dto) {
         if (ObjectUtils.isEmpty(dto)) {
             return List.of();
         }
-        return sensorMapper.list(dto);
+        return sensorMapper.listData(dto);
     }
 
     @Override
-    public Page<SensorVO> page(SensorDTO dto) {
+    public Page<SensorVO> pageData(SensorDTO dto) {
         if (ObjectUtils.isEmpty(dto)) {
             return null;
         }
-        return sensorMapper.page(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
+        return sensorMapper.pageData(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
     }
 
     @Override

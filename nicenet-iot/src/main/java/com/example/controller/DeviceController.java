@@ -37,13 +37,13 @@ public class DeviceController extends BaseController<Device, DeviceDTO, DeviceVO
     }
 
     @Override
-    public Response<List<DeviceVO>> list(DeviceDTO dto) {
-        return Response.success(super.getService().list(dto));
+    protected List<DeviceVO> listData(DeviceDTO dto) {
+        return super.getService().listData(dto);
     }
 
     @Override
-    public Response<Page<DeviceVO>> page(DeviceDTO dto) {
-        return Response.success(super.getService().page(dto));
+    protected Page<DeviceVO> pageData(DeviceDTO dto) {
+        return super.getService().pageData(dto);
     }
 
     @Override

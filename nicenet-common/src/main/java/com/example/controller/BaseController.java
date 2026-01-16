@@ -14,6 +14,7 @@ import com.example.groups.Add;
 import com.example.groups.UpdateById;
 import com.example.response.Response;
 import com.example.utils.CollectionUtils;
+import com.example.utils.ObjectUtils;
 import com.example.vo.BaseVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
 import lombok.AllArgsConstructor;
@@ -39,8 +40,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @PostMapping("/add")
     @Transactional(rollbackFor = Exception.class)
     public Response<V> add(@RequestBody @Validated(Add.class) D dto) {
-        addList(List.of(dto));
-        return Response.success();
+        Response<List<V>> response = addList(List.of(dto));
+        return Response.success(response.getData().get(0));
     }
 
     /**
@@ -49,7 +50,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @ApiDesc("新增数据列表")
     @PostMapping("/add/list")
     @Transactional(rollbackFor = Exception.class)
-    public Response<Void> addList(@RequestBody @Validated(Add.class) List<D> dtoList) {
+    public Response<List<V>> addList(@RequestBody @Validated(Add.class) List<D> dtoList) {
+        preChange();
+        preChange(dtoList);
         if (CollectionUtils.isNotEmpty(dtoList)) {
             for (D d : dtoList) {
                 d.setId(null);
@@ -60,8 +63,9 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         adds(ts);
         postAddList(ts);
         postAddList(dtoList, ts);
-        onChange();
-        return Response.success();
+        postChange();
+        List<V> vs = convert.entityToVo(ts);
+        return Response.success(vs);
     }
 
     /**
@@ -70,10 +74,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @ApiDesc("获取数据列表")
     @GetMapping("/query/list")
     public Response<List<V>> list(D dto) {
-        LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
-        preList(dto, lambdaQueryWrapper);
-        List<T> ts = service.list(lambdaQueryWrapper);
-        List<V> vs = postList(ts);
+        List<V> vs = listData(dto);
+        preReturn(vs);
         return Response.success(vs);
     }
 
@@ -83,12 +85,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @ApiDesc("分页获取数据")
     @GetMapping("/query/page")
     public Response<Page<V>> page(D dto) {
-        LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
-        prePageList(dto, lambdaQueryWrapper);
-        Page<T> page = service.page(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);
-        Page<V> vPage = convert.entityToVo(page);
-        List<T> records = page.getRecords();
-        List<V> vs = postList(records);
+        Page<V> vPage = pageData(dto);
+        List<V> vs = vPage.getRecords();
         preReturn(vs);
         vPage.setRecords(vs);
         return Response.success(vPage);
@@ -112,7 +110,11 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
             return Response.fail("数据不存在");
         }
         postGet(entity);
-        return Response.success(convert.entityToVo(entity));
+        V v = convert.entityToVo(entity);
+        if (ObjectUtils.isNotEmpty(v)) {
+            preReturn(List.of(v));
+        }
+        return Response.success();
     }
 
     /**
@@ -122,6 +124,8 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @PutMapping("/update")
     @Transactional(rollbackFor = Exception.class)
     public Response<V> update(@RequestBody @Validated(UpdateById.class) D dto) {
+        preChange();
+        preChange(List.of(dto));
         LambdaQueryWrapper<T> lambdaQueryWrapper = new NotNollLambdaQueryWrapper<>(service.getEntityClass());
         lambdaQueryWrapper.eq(T::getId, dto.getId());
         if (!service.exists(lambdaQueryWrapper)) {
@@ -132,7 +136,10 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         service.updateById(entity);
         postUpdate(entity);
         V v = convert.entityToVo(entity);
-        onChange();
+        postChange();
+        if (ObjectUtils.isNotEmpty(v)) {
+            preReturn(List.of(v));
+        }
         return Response.success(v);
     }
 
@@ -143,6 +150,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @DeleteMapping("/delete/soft/{id}")
     @Transactional(rollbackFor = Exception.class)
     public Response<Void> deleteSoft(@PathVariable Long id) {
+        preChange();
         if (id == null) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
@@ -152,7 +160,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
         }
         t.setDeleted(DeleteEnum.DELETED.getCode());
         update(t);
-        onChange();
+        postChange();
         return Response.success();
     }
 
@@ -163,6 +171,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     @DeleteMapping("/delete/{id}")
     @Transactional(rollbackFor = Exception.class)
     public Response<Void> delete(@PathVariable Long id) {
+        preChange();
         if (id == null) {
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
@@ -171,7 +180,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
             return Response.fail(ResponseMessageEnum.DATA_NOT_EXIST);
         }
         postDelete(id);
-        onChange();
+        postChange();
         return Response.success();
     }
 
@@ -202,8 +211,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
                 .eq(T::getUpdateUser, dto.getUpdateUser());
     }
 
-    protected List<V> postList(List<T> ts) {
-        return convert.entityToVo(ts);
+    protected void postList(List<T> ts) {
     }
 
     protected void postAddList(List<T> ts) {
@@ -267,8 +275,33 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
 
     }
 
-    protected void onChange() {
+    protected void preChange(List<D> dtoList) {
 
+    }
+
+    protected void preChange() {
+
+    }
+
+    protected void postChange() {
+
+    }
+
+    protected Page<V> pageData(D dto) {
+        LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
+        prePageList(dto, lambdaQueryWrapper);
+        Page<T> page = service.page(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);
+        List<T> records = page.getRecords();
+        postList(records);
+        return convert.entityToVo(page);
+    }
+
+    protected List<V> listData(D dto) {
+        LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
+        preList(dto, lambdaQueryWrapper);
+        List<T> ts = service.list(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);
+        postList(ts);
+        return convert.entityToVo(ts);
     }
 
 }

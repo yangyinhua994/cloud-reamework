@@ -26,6 +26,10 @@ public enum ResponseMessageEnum {
     SENSOR_NOT_EXIST("传感器不存在"),
     UNIT_ID_ERROR("单位ID有误"),
     DATA_TYPE_ID_ERROR("数据类型ID有误"),
+    COPY_EXCEL_DATA_ERROR("复制excel数据异常"),
+    FILE_NOT_EXIST("文件不存在"),
+    FILE_DOWNLOAD_ERROR("文件下载失败"),
+    PARAM_ERROR("必要参数为空"),
     ;
 
     private final String message;

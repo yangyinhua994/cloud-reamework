@@ -14,6 +14,7 @@
         <result property="deleted" column="sensor_deleted"/>
         <result property="version" column="sensor_version"/>
         <collection property="sensorParamVOList" ofType="com.example.vo.SensorParamVO">
+            <result property="id" column="sensor_param_id"/>
             <result property="dataTypeId" column="data_type_id"/>
             <result property="symbol" column="symbol"/>
             <result property="paramName" column="param_name"/>
@@ -48,6 +49,7 @@
                s.update_user as sensor_update_user,
                s.deleted     as sensor_deleted,
                s.version     as sensor_version,
+               sp.id as sensor_param_id,
                sp.data_type_id,
                sp.symbol,
                sp.param_name,
@@ -95,12 +97,12 @@
         </where>
     </sql>
 
-    <select id="list" resultMap="SensorVO">
+    <select id="listData" resultMap="SensorVO">
         <include refid="QuerySensorVOSelect"/>
         <include refid="QuerySensorVOWhere"/>
     </select>
 
-    <select id="page" resultMap="SensorVO">
+    <select id="pageData" resultMap="SensorVO">
         <include refid="QuerySensorVOSelect"/>
         <include refid="QuerySensorVOWhere"/>
     </select>

@@ -16,7 +16,7 @@ public class DictVO extends BaseVO {
     private String dictType;
 
     /**
-     * 字典类型
+     * 字典编码
      */
     private String dictCode;
 

@@ -1,9 +1,5 @@
 package com.example.vo;
 
-import com.baomidou.mybatisplus.core.conditions.update.Update;
-import com.example.dto.BaseDTO;
-import com.example.groups.Add;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -28,7 +24,7 @@ public class SensorParamVO extends BaseVO {
     private Long dataTypeId;
 
     /**
-     * 数据类型字典id
+     * 数据类型字典值
      */
     private String dataType;
 
@@ -58,7 +54,7 @@ public class SensorParamVO extends BaseVO {
     private Long unitId;
 
     /**
-     * 单位字典id
+     * 单位字典值
      */
     private String unit;
 
@@ -71,4 +67,6 @@ public class SensorParamVO extends BaseVO {
      * 说明
      */
     private String remark;
+
+    private Long sensorId;
 }

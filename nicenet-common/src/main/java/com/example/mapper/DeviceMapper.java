@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DeviceMapper extends BaseMapper<Device> {
-    List<DeviceVO> list(@Param("dto") DeviceDTO dto);
+    List<DeviceVO> listData(@Param("dto") DeviceDTO dto);
 
-    Page<DeviceVO> page(IPage<DeviceVO> page, @Param("dto") DeviceDTO dto);
+    Page<DeviceVO> pageData(IPage<DeviceVO> page, @Param("dto") DeviceDTO dto);
 }

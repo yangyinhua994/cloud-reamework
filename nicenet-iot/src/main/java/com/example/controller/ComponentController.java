@@ -7,12 +7,14 @@ import com.example.dto.ComponentDTO;
 import com.example.entity.Component;
 import com.example.response.Response;
 import com.example.service.ComponentService;
-import com.example.utils.CollectionUtils;
 import com.example.vo.ComponentVO;
-import com.example.vo.SensorVO;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -40,13 +42,13 @@ public class ComponentController extends BaseController<Component, ComponentDTO,
     }
 
     @Override
-    public Response<List<ComponentVO>> list(ComponentDTO dto) {
-        return Response.success(super.getService().list(dto));
+    protected List<ComponentVO> listData(ComponentDTO dto) {
+        return super.getService().listData(dto);
     }
 
     @Override
-    public Response<Page<ComponentVO>> page(ComponentDTO dto) {
-        return Response.success(super.getService().page(dto));
+    protected Page<ComponentVO> pageData(ComponentDTO dto) {
+        return super.getService().pageData(dto);
     }
 
     @Override
@@ -63,4 +65,23 @@ public class ComponentController extends BaseController<Component, ComponentDTO,
     protected void preReturn(List<ComponentVO> componentVOS) {
         super.getService().preReturn(componentVOS);
     }
+
+    /**
+     * 下载部件导入excel模板
+     */
+    @GetMapping("/excel/dowload")
+    @ApiDesc("下载部件导入excel模板")
+    public void excelDownload(HttpServletResponse servlet) {
+        super.getService().excelDownload(servlet);
+    }
+
+    /**
+     * excel导入部件信息
+     */
+    @PostMapping("/excel/import")
+    @ApiDesc("excel导入部件信息")
+    public void importComponent(MultipartFile file) {
+        super.getService().importComponent(file);
+    }
+
 }

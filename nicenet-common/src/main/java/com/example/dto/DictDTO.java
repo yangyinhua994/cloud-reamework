@@ -1,6 +1,7 @@
 package com.example.dto;
 
 import com.example.groups.Add;
+import com.example.groups.AddUnit;
 import com.example.groups.UpdateById;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -19,14 +20,14 @@ public class DictDTO extends BaseDTO {
     private String dictType;
 
     /**
-     * 字典类型
+     * 字典编码
      */
     private String dictCode;
 
     /**
      * 字典值
      */
-    @NotBlank(message = "字典值不能为空", groups = {Add.class, UpdateById.class})
+    @NotBlank(message = "字典值不能为空", groups = {Add.class, UpdateById.class, AddUnit.class})
     private String dictValue;
 
     /**

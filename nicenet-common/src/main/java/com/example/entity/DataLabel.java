@@ -1,7 +1,6 @@
 package com.example.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Component extends BaseEntity {
+public class DataLabel extends BaseEntity {
 
     private String componentNumber;
     private String componentName;

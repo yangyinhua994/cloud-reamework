@@ -1,7 +1,7 @@
 package com.example.dto;
 
-import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.example.groups.Add;
+import com.example.groups.UpdateById;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -19,13 +19,13 @@ public class SensorDTO extends BaseDTO {
     /**
      * 传感器编号
      */
-    @NotBlank(message = "传感器编号不能为空", groups = {Add.class, Update.class})
+    @NotBlank(message = "传感器编号不能为空", groups = {Add.class, UpdateById.class})
     private String sensorNumber;
 
     /**
      * 传感器名称
      */
-    @NotBlank(message = "传感器名称不能为空", groups = {Add.class, Update.class})
+    @NotBlank(message = "传感器名称不能为空", groups = {Add.class, UpdateById.class})
     private String sensorName;
 
     /**

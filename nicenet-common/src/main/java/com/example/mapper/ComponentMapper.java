@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface ComponentMapper extends BaseMapper<Component> {
-    List<ComponentVO> list(@Param("dto") ComponentDTO dto);
+    List<ComponentVO> listData(@Param("dto") ComponentDTO dto);
 
-    Page<ComponentVO> page(@Param("page") Page<Object> page, @Param("dto") ComponentDTO dto);
+    Page<ComponentVO> pageData(@Param("page") Page<Object> page, @Param("dto") ComponentDTO dto);
 }

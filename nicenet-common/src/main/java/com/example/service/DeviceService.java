@@ -12,9 +12,9 @@ public interface DeviceService extends BaseService<Device> {
 
     void preAddList(List<DeviceDTO> dtoList);
 
-    List<DeviceVO> list(DeviceDTO dto);
+    List<DeviceVO> listData(DeviceDTO dto);
 
-    Page<DeviceVO> page(DeviceDTO dto);
+    Page<DeviceVO> pageData(DeviceDTO dto);
 
     void postAddList(List<Device> devices);
 

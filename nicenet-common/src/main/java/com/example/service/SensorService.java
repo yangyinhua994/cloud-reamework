@@ -17,9 +17,9 @@ public interface SensorService extends BaseService<Sensor> {
 
     void preAddList(List<SensorDTO> dtoList);
 
-    List<SensorVO> list(SensorDTO dto);
+    List<SensorVO> listData(SensorDTO dto);
 
-    Page<SensorVO> page(SensorDTO dto);
+    Page<SensorVO> pageData(SensorDTO dto);
 
     List<Sensor> getBySensorNumbers(List<String> sensorNumbers);
 

@@ -24,6 +24,7 @@
                 <result property="sensorName" column="sensor_name"/>
                 <result property="remark" column="sensor_remark"/>
                 <collection property="sensorParamVOList" ofType="com.example.vo.SensorParamVO">
+                    <result property="id" column="sensor_param_id"/>
                     <result property="dataTypeId" column="data_type_id"/>
                     <result property="symbol" column="symbol"/>
                     <result property="paramName" column="param_name"/>
@@ -57,6 +58,7 @@
                s.sensor_number,
                s.sensor_name,
                s.remark      AS sensor_remark,
+               sp.id as sensor_param_id,
                sp.data_type_id,
                sp.symbol,
                sp.param_name,
@@ -96,12 +98,12 @@
         </where>
     </sql>
 
-    <select id="list" resultMap="DeviceVO">
+    <select id="listData" resultMap="DeviceVO">
         <include refid="QueryDeviceSelect"/>
         <include refid="QueryDeviceWhere"/>
     </select>
 
-    <select id="page" resultMap="DeviceVO">
+    <select id="pageData" resultMap="DeviceVO">
         <include refid="QueryDeviceSelect"/>
         <include refid="QueryDeviceWhere"/>
     </select>

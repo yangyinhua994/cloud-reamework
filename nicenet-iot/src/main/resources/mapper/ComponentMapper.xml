@@ -86,16 +86,19 @@
                 <if test="dto.componentNumber != null">
                     AND d.component_name LIKE CONCAT('%', #{dto.componentNumber}, '%')
                 </if>
+                <if test="dto.deviceId != null">
+                    AND d.id = #{dto.deviceId}
+                </if>
             </if>
         </where>
     </sql>
 
-    <select id="list" resultMap="ComponentVO">
+    <select id="listData" resultMap="ComponentVO">
         <include refid="QueryComponentVOSelect"/>
         <include refid="QueryComponentVOWhere"/>
     </select>
 
-    <select id="page" resultMap="ComponentVO">
+    <select id="pageData" resultMap="ComponentVO">
         <include refid="QueryComponentVOSelect"/>
         <include refid="QueryComponentVOWhere"/>
     </select>

@@ -3,10 +3,8 @@ package com.example.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.convert.DeviceConvert;
 import com.example.dto.ComponentDTO;
 import com.example.dto.DeviceDTO;
-import com.example.entity.Component;
 import com.example.entity.Device;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
@@ -14,11 +12,11 @@ import com.example.mapper.DeviceMapper;
 import com.example.service.ComponentService;
 import com.example.service.DeviceComponentSensorService;
 import com.example.service.DeviceService;
-import com.example.service.SensorService;
 import com.example.utils.CollectionUtils;
 import com.example.utils.ObjectUtils;
 import com.example.vo.DeviceVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,9 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> implements DeviceService {
 
-    private final ComponentService componentService;
-    private final SensorService sensorService;
-    private final DeviceConvert deviceConvert;
+    private final @Lazy ComponentService componentService;
     private final DeviceMapper deviceMapper;
     private final DeviceComponentSensorService deviceComponentSensorService;
 
@@ -61,20 +57,20 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, Device> imp
     }
 
     @Override
-    public List<DeviceVO> list(DeviceDTO dto) {
+    public List<DeviceVO> listData(DeviceDTO dto) {
         if (ObjectUtils.isEmpty(dto)) {
             return List.of();
         }
-        return deviceMapper.list(dto);
+        return deviceMapper.listData(dto);
     }
 
     @Override
-    public Page<DeviceVO> page(DeviceDTO dto) {
+    public Page<DeviceVO> pageData(DeviceDTO dto) {
         if (ObjectUtils.isEmpty(dto)) {
             return Page.of(1, 10);
         }
         IPage<DeviceVO> page = Page.of(dto.getPageNum(), dto.getPageSize());
-        return deviceMapper.page(page, dto);
+        return deviceMapper.pageData(page, dto);
     }
 
     @Override

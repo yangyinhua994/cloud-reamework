@@ -2,22 +2,27 @@ package com.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.convert.ComponentConvert;
+import com.example.controller.ComponentController;
 import com.example.dto.ComponentDTO;
-import com.example.dto.SensorDTO;
 import com.example.entity.Component;
 import com.example.enums.ResponseMessageEnum;
 import com.example.exception.ApiException;
 import com.example.mapper.ComponentMapper;
 import com.example.service.ComponentService;
 import com.example.service.DeviceComponentSensorService;
+import com.example.service.DeviceService;
 import com.example.service.SensorService;
 import com.example.utils.CollectionUtils;
+import com.example.utils.ExcelUtils;
 import com.example.utils.ObjectUtils;
 import com.example.vo.ComponentVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -25,9 +30,15 @@ import java.util.List;
 public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Component> implements ComponentService {
 
     private final SensorService sensorService;
+    @Lazy
+    @Resource
+    private DeviceService deviceService;
     private final DeviceComponentSensorService deviceComponentSensorService;
-    private final ComponentConvert componentConvert;
     private final ComponentMapper componentMapper;
+    // 因为Controller层会有自身特定的校验逻辑和生命周期，所以不然绕过controller层
+    @Lazy
+    @Resource
+    private ComponentController componentController;
 
     @Override
     public boolean exists(List<Long> ids) {
@@ -92,6 +103,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
 
         for (ComponentDTO componentDTO : dtoList) {
             sensorService.checkSensorIds(componentDTO.getSensorDTOList());
+            deviceService.checkIdByDTOList(componentDTO.getDeviceDTOList());
         }
 
     }
@@ -102,19 +114,19 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     }
 
     @Override
-    public List<ComponentVO> list(ComponentDTO dto) {
+    public List<ComponentVO> listData(ComponentDTO dto) {
         if (ObjectUtils.isEmpty(dto)) {
             return List.of();
         }
-        return componentMapper.list(dto);
+        return componentMapper.listData(dto);
     }
 
     @Override
-    public Page<ComponentVO> page(ComponentDTO dto) {
+    public Page<ComponentVO> pageData(ComponentDTO dto) {
         if (ObjectUtils.isEmpty(dto)) {
             return null;
         }
-        return componentMapper.page(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
+        return componentMapper.pageData(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
     }
 
     @Override
@@ -141,5 +153,22 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         componentVOS.forEach(componentVO -> {
             sensorService.preReturn(componentVO.getSensorVOList());
         });
+    }
+
+    @Override
+    public void excelDownload(HttpServletResponse response) {
+        ExcelUtils.downloadComponentExcelTemplate(response);
+    }
+
+    @Override
+    public void importComponent(MultipartFile file) {
+        if (ObjectUtils.isEmpty(file)) {
+            ApiException.error(ResponseMessageEnum.FILE_NOT_EXIST);
+        }
+        List<ComponentDTO> componentDTOList = ExcelUtils.readExcel(file, ComponentDTO.class);
+        if (CollectionUtils.isEmpty(componentDTOList)) {
+            return;
+        }
+        componentController.addList(componentDTOList);
     }
 }

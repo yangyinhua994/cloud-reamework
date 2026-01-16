@@ -103,6 +103,12 @@
             <version>2.15.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>${easyexcel.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

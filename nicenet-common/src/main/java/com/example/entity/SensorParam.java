@@ -1,9 +1,11 @@
 package com.example.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -56,5 +58,11 @@ public class SensorParam extends BaseEntity {
      * 说明
      */
     private String remark;
+
+    @TableField(exist = false)
+    private List<Sensor> sensorList;
+
+    @TableField(exist = false)
+    private List<Device> deviceList;
 
 }
