@@ -76,4 +76,5 @@ public class SensorController extends BaseController<Sensor, SensorDTO, SensorVO
     protected void preReturn(List<SensorVO> sensorVOList) {
         super.getService().preReturn(sensorVOList);
     }
+
 }

@@ -1,5 +1,6 @@
-package com.example.entity;
+package com.example.vo;
 
+import com.example.entity.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class DataLabel extends BaseEntity {
+public class DataLabelVO extends BaseVO{
 
     /**
      * 设备部件传感器关联表id

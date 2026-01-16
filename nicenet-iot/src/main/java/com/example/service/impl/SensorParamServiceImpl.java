@@ -1,7 +1,6 @@
 package com.example.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.controller.DictController;
 import com.example.controller.SensorParamController;
 import com.example.dto.SensorDTO;
 import com.example.dto.SensorParamDTO;

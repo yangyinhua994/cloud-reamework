@@ -39,15 +39,21 @@ public class DictController extends BaseController<Dict, DictDTO, DictVO, DictSe
         preList(dto, queryWrapper);
     }
 
+    /**
+     * 新增单位字典
+     */
     @PostMapping("/add/unit")
-    @ApiDesc("新增字典单位")
+    @ApiDesc("新增单位字典")
     public Response<DictVO> addUnit(@RequestBody @Validated(AddUnit.class) DictDTO dto) {
         dto.setDictType(DictTypeEnum.PHYSICAL_UNIT.getCode());
         return Response.success(super.getService().add(dto));
     }
 
+    /**
+     * 新增数据类型字典
+     */
     @PostMapping("/add/dataType")
-    @ApiDesc("新增字典数据类型")
+    @ApiDesc("新增数据类型字典")
     public Response<DictVO> addDataType(@RequestBody @Validated(AddUnit.class) DictDTO dto) {
         dto.setDictType(DictTypeEnum.DATA_TYPE.getCode());
         return Response.success(super.getService().add(dto));

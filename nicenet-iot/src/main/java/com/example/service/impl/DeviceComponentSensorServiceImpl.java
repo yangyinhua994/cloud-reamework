@@ -1,17 +1,19 @@
 package com.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.convert.DeviceComponentSensorConvert;
 import com.example.dto.*;
 import com.example.entity.*;
+import com.example.enums.ResponseMessageEnum;
+import com.example.exception.ApiException;
 import com.example.mapper.DeviceComponentSensorMapper;
+import com.example.response.Response;
 import com.example.service.DeviceComponentSensorService;
 import com.example.utils.CollectionUtils;
 import com.example.utils.ObjectUtils;
 import com.example.vo.DeviceComponentSensorVO;
 import com.example.wrapper.NotNollLambdaQueryWrapper;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
 
 
     private final DeviceComponentSensorMapper deviceComponentSensorMapper;
+    private final DeviceComponentSensorConvert deviceComponentSensorConvert;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -383,6 +386,24 @@ public class DeviceComponentSensorServiceImpl extends BaseServiceImpl<DeviceComp
     @Override
     public Page<DeviceComponentSensorVO> pageData(DeviceComponentSensorDTO dto) {
         return deviceComponentSensorMapper.pageData(Page.of(dto.getPageNum(), dto.getPageSize()), dto);
+    }
+
+    @Override
+    public void checkIds(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        if (listByIds(ids).size() == ids.size()) {
+            return;
+        }
+        ApiException.error(ResponseMessageEnum.ID_NOT_EXIST);
+    }
+
+    @Override
+    public Response<Void> bind(DeviceComponentSensorDTO dto) {
+        DeviceComponentSensor deviceComponentSensor = deviceComponentSensorConvert.dtoToEntity(dto);
+        save(deviceComponentSensor);
+        return Response.success();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.annotation.ApiDesc;
 import com.example.convert.ComponentConvert;
@@ -29,6 +30,11 @@ public class ComponentController extends BaseController<Component, ComponentDTO,
 
     public ComponentController(ComponentService service, ComponentConvert convert) {
         super(service, convert);
+    }
+
+    @Override
+    protected void preList(ComponentDTO dto, LambdaQueryWrapper<Component> queryWrapper) {
+        super.getService().preList(dto, queryWrapper);
     }
 
     @Override

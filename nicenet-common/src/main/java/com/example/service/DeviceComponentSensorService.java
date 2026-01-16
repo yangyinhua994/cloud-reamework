@@ -3,6 +3,7 @@ package com.example.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dto.*;
 import com.example.entity.*;
+import com.example.response.Response;
 import com.example.vo.DeviceComponentSensorVO;
 
 import java.util.List;
@@ -56,4 +57,8 @@ public interface DeviceComponentSensorService extends BaseService<DeviceComponen
     List<DeviceComponentSensorVO> listData(DeviceComponentSensorDTO dto);
 
     Page<DeviceComponentSensorVO> pageData(DeviceComponentSensorDTO dto);
+
+    void checkIds(List<Long> ids);
+
+    Response<Void> bind(DeviceComponentSensorDTO dto);
 }

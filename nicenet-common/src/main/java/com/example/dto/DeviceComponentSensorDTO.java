@@ -13,9 +13,29 @@ import java.util.List;
 @AllArgsConstructor
 public class DeviceComponentSensorDTO extends BaseDTO {
 
+    /**
+     * 设备ID
+     */
     private Long deviceId;
+
+    /**
+     * 部件ID
+     */
     private Long componentId;
+
+    /**
+     * 传感器ID
+     */
     private Long sensorId;
+
+    /**
+     * 传感器参数ID
+     */
     private Long sensorParamId;
+
+    /**
+     * 备注
+     */
+    private String remark;
 
 }

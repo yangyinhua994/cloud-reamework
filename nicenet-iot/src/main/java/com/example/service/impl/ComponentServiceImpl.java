@@ -171,4 +171,10 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         }
         componentController.addList(componentDTOList);
     }
+
+    @Override
+    public void preList(ComponentDTO dto, LambdaQueryWrapper<Component> queryWrapper) {
+        queryWrapper.eq(Component::getComponentNumber, dto.getComponentNumber())
+                .like(Component::getComponentName, dto.getComponentName());
+    }
 }

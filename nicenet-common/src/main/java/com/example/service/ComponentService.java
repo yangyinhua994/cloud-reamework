@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dto.ComponentDTO;
 import com.example.entity.Component;
@@ -38,4 +39,6 @@ public interface ComponentService extends BaseService<Component> {
     void excelDownload(HttpServletResponse response);
 
     void importComponent(MultipartFile file);
+
+    void preList(ComponentDTO dto, LambdaQueryWrapper<Component> queryWrapper);
 }

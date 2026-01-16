@@ -299,7 +299,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDTO, V extends B
     protected List<V> listData(D dto) {
         LambdaQueryWrapper<T> lambdaQueryWrapper = buildBaseQueryWrapper(dto);
         preList(dto, lambdaQueryWrapper);
-        List<T> ts = service.list(Page.of(dto.getPageNum(), dto.getPageSize()), lambdaQueryWrapper);
+        List<T> ts = service.list(lambdaQueryWrapper);
         postList(ts);
         return convert.entityToVo(ts);
     }

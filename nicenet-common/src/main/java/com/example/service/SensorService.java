@@ -34,4 +34,5 @@ public interface SensorService extends BaseService<Sensor> {
     void postDelete(Long id);
 
     void preReturn(List<SensorVO> sensorVOList);
+
 }

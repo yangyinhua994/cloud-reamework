@@ -64,7 +64,7 @@
                  LEFT JOIN t_device_component_sensor AS dcs ON dcs.component_id = c.id
                  LEFT JOIN t_device AS d ON d.id = dcs.device_id
                  LEFT JOIN t_sensor AS s ON s.id = dcs.sensor_id
-                 LEFT JOIN t_sensor_param AS sp ON s.id = dcs.sensor_param_id
+                 LEFT JOIN t_sensor_param AS sp ON sp.id = dcs.sensor_param_id
     </sql>
 
     <sql id="QueryComponentVOWhere">
@@ -81,10 +81,10 @@
             </if>
             <if test="dto != null">
                 <if test="dto.componentNumber != null">
-                    AND d.component_number = #{dto.componentNumber}
+                    AND c.component_number = #{dto.componentNumber}
                 </if>
-                <if test="dto.componentNumber != null">
-                    AND d.component_name LIKE CONCAT('%', #{dto.componentNumber}, '%')
+                <if test="dto.componentName != null">
+                    AND c.component_name LIKE CONCAT('%', #{dto.componentName}, '%')
                 </if>
                 <if test="dto.deviceId != null">
                     AND d.id = #{dto.deviceId}
